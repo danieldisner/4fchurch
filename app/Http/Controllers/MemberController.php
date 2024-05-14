@@ -41,10 +41,12 @@ class MemberController extends Controller
     public function store(MemberRequest  $request)
     {
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('members', 'public');
+            $photoName = uniqid() . '_' . $request->file('photo')->getClientOriginalName();
+            $photoPath = $request->file('photo')->storeAs('members', $photoName, 'public');
         } else {
             $photoPath = null;
         }
+
 
         Member::create([
             'name' => $request->name,
@@ -79,17 +81,28 @@ class MemberController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Member $member)
     {
-        //
+        $statuses = Status::all();
+        return view('members.edit', compact('member', 'statuses'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(MemberRequest $request, Member $member)
     {
-        //
+        $data = $request->all();
+
+        if ($request->hasFile('photo')) {
+            $photoName = uniqid() . '_' . $request->file('photo')->getClientOriginalName();
+            $photoPath = $request->file('photo')->storeAs('members', $photoName, 'public');
+            $data['photo'] = $photoPath;
+        }
+
+        $member->update($data);
+
+        return redirect()->route('members.show', $member)->with('success', 'Member updated successfully.');
     }
 
     /**

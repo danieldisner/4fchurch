@@ -1,16 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Members') }}
+            {{ __('Membros') }}
         </h2>
     </x-slot>
-
-
     <div class="py-12 pt-1">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="flex justify-center my-4">
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
-                    <a href="{{ route('members.create') }}" class="ml-2">New Member</a>
+                    <a href="{{ route('members.create') }}" class="ml-2">Novo Membro</a>
                 </button>
             </div>
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
@@ -123,7 +121,8 @@
                                                 </svg>
                                             </span>
                                         </a>
-                                        <a href="#" class="ml-2 text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('members.edit', $member) }}"
+                                            class="ml-2 text-indigo-600 hover:text-indigo-900">
                                             <span><svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                                     class="w-6 h-6">

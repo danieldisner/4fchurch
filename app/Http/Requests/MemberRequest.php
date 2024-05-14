@@ -21,11 +21,13 @@ class MemberRequest extends FormRequest
      */
     public function rules(): array
     {
+        $memberId = $this->route('member') ? $this->route('member')->id : null;
+
         return [
             'name' => 'required|string|max:255',
-            'cpf' => 'required|string|size:11|unique:members,cpf',
-            'rg' => 'required|string|max:20|unique:members,rg',
-            'email' => 'required|email|max:255|unique:members,email',
+            'cpf' => 'required|string|unique:members,cpf,' . $memberId,
+            'rg' => 'required|string|unique:members,rg,' . $memberId,
+            'email' => 'nullable|email|max:255|unique:members,email,' . $memberId,
             'phone' => 'nullable|string|max:15',
             'whatsapp' => 'nullable|string|max:15',
             'address_zipcode' => 'nullable|string|max:10',
