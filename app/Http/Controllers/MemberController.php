@@ -69,7 +69,7 @@ class MemberController extends Controller
             'profession' => $request->profession,
         ]);
 
-        return redirect()->route('members.index')->with('success', 'Member created successfully.');
+        return redirect()->route('members.index')->with('success', 'Membro criado com sucesso.');
     }
 
     /**
@@ -104,7 +104,7 @@ class MemberController extends Controller
 
         $member->update($data);
 
-        return redirect()->route('members.show', $member)->with('success', 'Member updated successfully.');
+        return redirect()->route('members.show', $member)->with('success', 'Membro atualizado com sucesso.');
     }
 
     /**
@@ -113,7 +113,7 @@ class MemberController extends Controller
     public function destroy(Member $member)
     {
         $member->delete();
-        return redirect()->route('members.index')->with('success', 'Member deleted successfully.');
+        return redirect()->route('members.index')->with('success', 'Membro apagado com sucesso.');
     }
 
     /**
@@ -121,7 +121,7 @@ class MemberController extends Controller
      */
     public function trash()
     {
-        $deletedMembers = Member::onlyTrashed()->get();
+        $deletedMembers = Member::onlyTrashed()->paginate(10);
         return view('members.trash', compact('deletedMembers'));
     }
 
@@ -133,7 +133,7 @@ class MemberController extends Controller
         $member = Member::onlyTrashed()->findOrFail($id);
         $member->restore();
 
-        return redirect()->route('members.trash')->with('success', 'Member restored successfully.');
+        return redirect()->route('members.trash')->with('success', 'Restaurado com sucesso.');
     }
 
     /**
@@ -144,7 +144,7 @@ class MemberController extends Controller
         $member = Member::onlyTrashed()->findOrFail($id);
         $member->forceDelete();
 
-        return redirect()->route('members.trash')->with('success', 'Member permanently deleted.');
+        return redirect()->route('members.trash')->with('success', 'Deletado permanentemente.');
     }
 
     /**
@@ -161,6 +161,7 @@ class MemberController extends Controller
             ->where('name', 'like', '%' . $query . '%')
             ->orWhere('email', 'like', '%' . $query . '%')
             ->orWhere('profession', 'like', '%' . $query . '%')
+            ->orWhere('whatsapp', 'like', '%' . $query . '%')
             ->orWhereHas('status', function($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%');
             })

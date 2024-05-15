@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,10 +15,31 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        .success-message {
+            background-color: #0e8312;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .error-message {
+            background-color: #af0c00;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
+        <!-- Include navigation -->
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -29,29 +51,21 @@
             </header>
         @endif
 
+        <!-- Success message -->
         @if (session('success'))
-            <div class="mb-4 text-sm font-medium text-green-600">
+            <div class="success-message">
                 {{ session('success') }}
             </div>
         @endif
 
-
+        <!-- Error modal -->
         @if ($errors->any())
-
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-4 text-gray-900 bg-white">
-                        <div class="p-4 mb-4 text-sm text-red-400 text-red-800 rounded-lg bg-red-50" role="alert">
-                            @foreach ($errors->all() as $error)
-                                {{ $error }}
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+            <div class="error-message">
+                @foreach ($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
             </div>
-
         @endif
-
 
         <!-- Page Content -->
         <main>
@@ -61,3 +75,25 @@
 </body>
 
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleciona as mensagens de sucesso e de erro
+        var successMessage = document.querySelector('.success-message');
+        var errorMessage = document.querySelector('.error-message');
+
+        // Função para ocultar as mensagens após 5 segundos
+        function hideMessages() {
+            setTimeout(function() {
+                if (successMessage)
+                    successMessage.style.display = 'none';
+                /*
+                if (errorMessage)
+                    errorMessage.style.display = 'none';
+                */
+            }, 5000);
+        }
+
+        // Chama a função para ocultar as mensagens
+        hideMessages();
+    });
+</script>

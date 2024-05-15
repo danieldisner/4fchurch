@@ -10,12 +10,13 @@
                 <div class="flex items-center space-x-4">
                     <button
                         class="flex items-center px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                            <path fill-rule="evenodd"
+                                d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5" />
                         </svg>
-                        <a href="{{ route('members.create') }}" class="ml-2">Novo Membro</a>
+                        <a href="{{ route('members.create') }}" class="ml-2">Cadastrar</a>
                     </button>
                     <button
                         class="flex items-center px-4 py-2 mt-4 font-bold text-white bg-red-500 rounded-full hover:bg-red-700">
@@ -36,7 +37,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" colspan="2"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase align-middle">
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase align-content-center align-center">
                                     Membro
                                 </th>
                                 <th scope="col"
@@ -55,7 +56,6 @@
                         </thead>
                         <tbody id="members-list" class="bg-white divide-y divide-gray-200">
                             @foreach ($members as $member)
-                                <tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
@@ -81,13 +81,13 @@
                                                         {{ $member->birthdate->format('d/m/Y') }}
                                                     </div>
                                                     <div class="inline-flex ml-4 text-sm text-gray-500">
-                                                        <svg fill="#000000" width="16" height="16"
-                                                            viewBox="0 0 32 32" version="1.1"
-                                                            xmlns="http://www.w3.org/2000/svg">
-                                                            <title>cross</title>
-                                                            <path
-                                                                d="M5.979 10.974v5.021h7.041v11.99h5.042v-11.99h6.958v-5.021h-6.958v-6.958h-5.042v6.958h-7.041z">
-                                                            </path>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                            height="16" fill="currentColor"
+                                                            class="bi bi-droplet-half" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd"
+                                                                d="M7.21.8C7.69.295 8 0 8 0q.164.544.371 1.038c.812 1.946 2.073 3.35 3.197 4.6C12.878 7.096 14 8.345 14 10a6 6 0 0 1-12 0C2 6.668 5.58 2.517 7.21.8m.413 1.021A31 31 0 0 0 5.794 3.99c-.726.95-1.436 2.008-1.96 3.07C3.304 8.133 3 9.138 3 10c0 0 2.5 1.5 5 .5s5-.5 5-.5c0-1.201-.796-2.157-2.181-3.7l-.03-.032C9.75 5.11 8.5 3.72 7.623 1.82z" />
+                                                            <path fill-rule="evenodd"
+                                                                d="M4.553 7.776c.82-1.641 1.717-2.753 2.093-3.13l.708.708c-.29.29-1.128 1.311-1.907 2.87z" />
                                                         </svg>
                                                         {{ $member->baptism_date->format('d/m/Y') }}
                                                     </div>
@@ -172,7 +172,7 @@
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="mt-1 ml-2 text-red-600 hover:text-red-900">
+                                            <button class="mt-1 ml-2 text-red-600 hover:text-red-900 ">
                                                 <span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -184,7 +184,6 @@
                                             </button>
                                         </form>
                                     </td>
-                                </tr>
                                 </tr>
                             @endforeach
                         </tbody>
