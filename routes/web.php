@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/members/trash', [MemberController::class, 'trash'])->name('members.trash');
     Route::put('members/{id}/restore', [MemberController::class, 'restore'])->name('members.restore');
     Route::delete('members/{id}/forceDestroy', [MemberController::class, 'forceDestroy'])->name('members.forceDestroy');
+    Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
     Route::resource('members', MemberController::class);
 });
 

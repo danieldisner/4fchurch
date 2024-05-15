@@ -65,6 +65,8 @@ class MemberController extends Controller
             'joined_at' => $request->joined_at,
             'status_id' => $request->status_id,
             'photo' => $photoPath,
+            'baptism_date' => $request->baptism_date,
+            'profession' => $request->profession,
         ]);
 
         return redirect()->route('members.index')->with('success', 'Member created successfully.');
@@ -143,5 +145,28 @@ class MemberController extends Controller
         $member->forceDelete();
 
         return redirect()->route('members.trash')->with('success', 'Member permanently deleted.');
+    }
+
+    /**
+     * Search for members based on the provided query string.
+     *
+     * @param Request $request The HTTP request containing the query string.
+     * @return Some_Return_Value Response in JSON format containing the members found.
+     */
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        $members = Member::with('status') // Ensure status relationship is loaded
+            ->where('name', 'like', '%' . $query . '%')
+            ->orWhere('email', 'like', '%' . $query . '%')
+            ->orWhere('profession', 'like', '%' . $query . '%')
+            ->orWhereHas('status', function($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%');
+            })
+            ->take(10)
+            ->get();
+
+        return response()->json(['members' => $members]);
     }
 }

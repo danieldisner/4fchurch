@@ -29,6 +29,8 @@ class MemberFactory extends Factory
             'joined_at' => $this->faker->dateTime,
             'status_id' => Status::factory(),
             'photo' => 'members/default.png',
+            'baptism_date' => $this->faker->dateTime,
+            'profession' => $this->faker->jobTitle,
         ];
     }
 }

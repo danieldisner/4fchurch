@@ -26,10 +26,13 @@ class Member extends Model
         'joined_at',
         'status_id',
         'photo',
+        'baptism_date',
+        'profession',
     ];
 
     protected $casts = [
         'birthdate' => 'date',
+        'baptism_date' => 'date',
         'joined_at' => 'datetime',
     ];
 

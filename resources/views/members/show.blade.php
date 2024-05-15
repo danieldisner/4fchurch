@@ -76,10 +76,14 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nascimento</label>
                                 <p class="mt-1 text-gray-900">{{ $member->birthdate->format('d/m/Y') }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Batismo</label>
+                                <p class="mt-1 text-gray-900">{{ $member->baptism_date->format('d/m/Y') }}</p>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Status</label>

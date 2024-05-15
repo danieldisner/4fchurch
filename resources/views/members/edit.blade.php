@@ -62,11 +62,18 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
+                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-4">
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                                 <input type="email" name="email" id="email"
                                     value="{{ old('email', $member->email) }}" required
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+                            <div>
+                                <label for="profession"
+                                    class="block text-sm font-medium text-gray-700">Profissão</label>
+                                <input type="text" name="profession" id="profession"
+                                    value="{{ old('profession', $member->profession) }}" required
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
                             <div>
@@ -127,10 +134,16 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
                             <div>
                                 <label for="birthdate"
                                     class="block text-sm font-medium text-gray-700">Nascimento</label>
+                                <input type="date" name="birthdate" id="birthdate"
+                                    value="{{ old('birthdate', $member->birthdate->format('Y-m-d')) }}" required
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+                            <div>
+                                <label for="birthdate" class="block text-sm font-medium text-gray-700">Batismo</label>
                                 <input type="date" name="birthdate" id="birthdate"
                                     value="{{ old('birthdate', $member->birthdate->format('Y-m-d')) }}" required
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">

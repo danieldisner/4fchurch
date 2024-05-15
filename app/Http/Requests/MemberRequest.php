@@ -40,6 +40,8 @@ class MemberRequest extends FormRequest
             'joined_at' => 'nullable|date',
             'status_id' => 'required|exists:statuses,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'baptism_date' => 'nullable|date',
+            'profession' => 'nullable|string|max:255',
         ];
     }
 }
