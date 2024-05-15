@@ -108,8 +108,40 @@ class MemberController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Member $member)
     {
-        //
+        $member->delete();
+        return redirect()->route('members.index')->with('success', 'Member deleted successfully.');
+    }
+
+    /**
+     * Display a listing of the soft deleted members.
+     */
+    public function trash()
+    {
+        $deletedMembers = Member::onlyTrashed()->get();
+        return view('members.trash', compact('deletedMembers'));
+    }
+
+    /**
+     * Restore the specified soft deleted member.
+     */
+    public function restore($id)
+    {
+        $member = Member::onlyTrashed()->findOrFail($id);
+        $member->restore();
+
+        return redirect()->route('members.trash')->with('success', 'Member restored successfully.');
+    }
+
+    /**
+     * Permanently delete the specified soft deleted member.
+     */
+    public function forceDestroy($id)
+    {
+        $member = Member::onlyTrashed()->findOrFail($id);
+        $member->forceDelete();
+
+        return redirect()->route('members.trash')->with('success', 'Member permanently deleted.');
     }
 }

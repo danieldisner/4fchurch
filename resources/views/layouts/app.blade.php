@@ -29,6 +29,12 @@
             </header>
         @endif
 
+        @if (session('success'))
+            <div class="mb-4 text-sm font-medium text-green-600">
+                {{ session('success') }}
+            </div>
+        @endif
+
 
         @if ($errors->any())
 

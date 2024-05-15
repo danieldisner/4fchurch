@@ -24,7 +24,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/members/trash', [MemberController::class, 'trash'])->name('members.trash');
+    Route::put('members/{id}/restore', [MemberController::class, 'restore'])->name('members.restore');
+    Route::delete('members/{id}/forceDestroy', [MemberController::class, 'forceDestroy'])->name('members.forceDestroy');
     Route::resource('members', MemberController::class);
 });
+
+
 
 require __DIR__.'/auth.php';
