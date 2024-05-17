@@ -40,7 +40,7 @@ class RolesPermissionsSeeder extends Seeder
 
         $writer = User::create([
             'name' => 'Writer',
-            'email' => 'user@example.com',
+            'email' => 'writer@example.com',
             'password' => bcrypt('password'),
         ]);
         $writer->roles()->attach($writerRole);

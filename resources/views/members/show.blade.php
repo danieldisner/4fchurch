@@ -141,12 +141,13 @@
                                 @endswitch
                             </div>
                         </div>
-
-                        <div class="flex justify-center mt-6">
-                            <a href="{{ route('members.edit', $member) }}"
-                                class="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">Edit
-                                Member</a>
-                        </div>
+                        @if (auth()->user()->hasAnyPermission(['edit']))
+                            <div class="flex justify-center mt-6">
+                                <a href="{{ route('members.edit', $member) }}"
+                                    class="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">Edit
+                                    Member</a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

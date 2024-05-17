@@ -68,19 +68,25 @@
                                     </td>
                                     <td>
                                         <div class="inline-flex items-center">
-                                            <form action="{{ route('members.restore', $member->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit"
-                                                    class="inline-flex items-center px-4 py-2 font-bold text-gray-100 bg-green-800 rounded-full hover:bg-green-600">Restaurar</button>
-                                            </form>
-                                            <form action="{{ route('members.forceDestroy', $member->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
+                                            @if (auth()->user()->hasAnyPermission(['restore']))
+                                                <form action="{{ route('members.restore', $member->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                        class="inline-flex items-center px-4 py-2 font-bold text-gray-100 bg-green-800 rounded-full hover:bg-green-600">Restaurar</button>
+                                                </form>
+                                            @endif
+                                            @if (auth()->user()->hasAnyPermission(['forceDestroy']))
+                                                <button id="destroyButton"
                                                     class="inline-flex items-center px-4 py-2 font-bold text-gray-100 bg-red-800 rounded-full hover:bg-red-600">Apagar</button>
-                                            </form>
+                                                <form id="destroyForm"
+                                                    action="{{ route('members.forceDestroy', $member->id) }}"
+                                                    method="POST" class="hidden">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -96,4 +102,57 @@
             </div>
         </div>
     </div>
+    <!-- Modal de confirmação -->
+    <div id="confirmDestroyModal" class="fixed inset-0 z-50 hidden overflow-auto bg-black bg-opacity-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg shadow-lg">
+                <!-- Modal header -->
+                <div class="px-6 py-4 text-white align-middle bg-red-800 rounded-t-lg">
+                    <h3 class="text-lg font-semibold">Confirmação de Exclusão</h3>
+                </div>
+                <!-- Modal content -->
+                <div class="p-8">
+                    <p class="mb-4">Tem certeza que deseja <b>excluir permanentemente</b> este membro?</p>
+                    <div class="flex justify-end">
+                        <button id="cancelDestroy"
+                            class="px-4 py-2 mr-2 text-white bg-green-700 rounded hover:bg-green-500">Cancelar</button>
+                        <button id="confirmDestroy"
+                            class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700">Sim</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>
+<script>
+    // Obtenha o botão de exclusão
+    var destroyButton = document.getElementById('destroyButton');
+
+    // Obtenha o modal de confirmação
+    var modal = document.getElementById('confirmDestroyModal');
+
+    // Obtenha o botão de cancelamento no modal
+    var cancelDestroyButton = document.getElementById('cancelDestroy');
+
+    // Obtenha o botão de confirmação no modal
+    var confirmDestroyButton = document.getElementById('confirmDestroy');
+
+    // Quando o botão de exclusão for clicado
+    destroyButton.addEventListener('click', function() {
+        // Mostre o modal
+        modal.classList.remove('hidden');
+    });
+
+    // Quando o botão de cancelamento no modal for clicado
+    cancelDestroyButton.addEventListener('click', function() {
+        // Oculte o modal
+        modal.classList.add('hidden');
+    });
+
+    // Quando o botão de confirmação no modal for clicado
+    confirmDestroyButton.addEventListener('click', function() {
+        // Envie o formulário de exclusão
+        var form = document.getElementById('destroyForm');
+        form.submit();
+    });
+</script>
