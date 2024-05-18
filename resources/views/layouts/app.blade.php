@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,6 +14,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Alpine JS -->
 
     <style>
         .success-message {
@@ -59,11 +59,14 @@
         @endif
 
         <!-- Error modal -->
-        @if ($errors->any())
+        @if ($errors->any() || session('error'))
             <div class="error-message">
                 @foreach ($errors->all() as $error)
                     {{ $error }}<br>
                 @endforeach
+                @if (session('error'))
+                    {{ session('error') }}
+                @endif
             </div>
         @endif
 
@@ -86,10 +89,6 @@
             setTimeout(function() {
                 if (successMessage)
                     successMessage.style.display = 'none';
-                /*
-                if (errorMessage)
-                    errorMessage.style.display = 'none';
-                */
             }, 5000);
         }
 
