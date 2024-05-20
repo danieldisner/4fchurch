@@ -41,7 +41,7 @@
                                                             height="16" fill="currentColor" class="mr-1 bi bi-cake"
                                                             viewBox="0 0 16 16">
                                                             <path
-                                                                d="m7.994.013-.595.79a.747.747 0 0 0 .101 1.01V4H5a2 2 0 0 0-2 2v3H2a2 2 0 0 0-2 2v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a2 2 0 0 0-2-2h-1V6a2 2 0 0 0-2-2H8.5V1.806A.747.747 0 0 0 8.592.802zM4 6a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v.414a.9.9 0 0 1-.646-.268 1.914 1.914 0 0 0-2.708 0 .914.914 0 0 1-1.292 0 1.914 1.914 0 0 0-2.708 0A.9.9 0 0 1 4 6.414zm0 1.414c.49 0 .98-.187 1.354-.56a.914.914 0 0 1 1.292 0c.748.747 1.96.747 2.708 0a.914.914 0 0 1 1.292 0c.374.373.864.56 1.354.56V9H4zM1 11a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.793l-.354.354a.914.914 0 0 1-1.293 0 1.914 1.914 0 0 0-2.707 0 .914.914 0 0 1-1.292 0 1.914 1.914 0 0 0-2.708 0 .914.914 0 0 1-1.292 0 1.914 1.914 0 0 0-2.708 0 .914.914 0 0 1-1.292 0L1 11.793zm11.646 1.854a1.915 1.915 0 0 0 2.354.279V15H1v-1.867c.737.452 1.715.36 2.354-.28a.914.914 0 0 1 1.292 0c.748.748 1.96.748 2.708 0a.914.914 0 0 1 1.292 0c.748.748 1.96.748 2.707 0a.914.914 0 0 1 1.293 0Z" />
+                                                                d="m7.994.013-.595.79a.747.747 0 0 0 .101 1.01V4H5a2 2 0 0 0-2 2v3H2a2 2 0 0 0-2 2v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a2 2 0 0 0-2-2h-1V6a2 2 0 0 0-2-2H8.5V1.806A.747.747 0 0 0 8.592.802zM4 6a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v.414a.9.9 0 0 1-.646-.268 1.914 1.914 0 0 0-2.708 0 .914.914 0 0 1-1.292 0 1.914 1.914 0 0 0-2.708 0A.9.9 0 0 1 4 6.414zm0 1.414c.49 0 .98-.187 1.354-.56a.914.914 0 0 1 1.292 0c.748.747 1.96.747 2.708 0a.914.914 0 0 1 1.292 0c.374.373.864.56 1.354.56V9H4zM1 11a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.793l-.354.354a.914.914 0 0 1-1.293 0 1.914 1.914 0 0 0-2.707 0 .914.914 0 0 1-1.292 0 1.914 1.914 0 0 0-2.708 0 .914.914 0 0 1-1.292 0L1 11.793zm11.646 1.854a1.915 1.915 0 0 0 2.354.279V15H1v-1.867c.737.452 1.715.36 2.354-.28a.914.914 0 0 1 1.292 0c.748.748 1.96.748 2.708 0a.914.914 0 0 1 1.292 0c.748.748 1.96.748 2.707 0a.914.914 0 0 1 1.293 0Z" />
                                                         </svg>
                                                         {{ $member->birthdate->format('d/m/Y') }}
                                                     </div>
@@ -69,7 +69,8 @@
                                     <td>
                                         <div class="inline-flex items-center">
                                             @if (auth()->user()->hasAnyPermission(['restore']))
-                                                <form action="{{ route('members.restore', $member->id) }}"
+                                                <form id="restoreForm-{{ $member->id }}"
+                                                    action="{{ route('members.restore', $member->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -78,9 +79,9 @@
                                                 </form>
                                             @endif
                                             @if (auth()->user()->hasAnyPermission(['forceDestroy']))
-                                                <button id="destroyButton"
-                                                    class="inline-flex items-center px-4 py-2 font-bold text-gray-100 bg-red-800 rounded-full hover:bg-red-600">Apagar</button>
-                                                <form id="destroyForm"
+                                                <button id="destroyButton-{{ $member->id }}"
+                                                    class="inline-flex items-center px-4 py-2 font-bold text-gray-100 bg-red-800 rounded-full destroyButton hover:bg-red-600">Apagar</button>
+                                                <form id="destroyForm-{{ $member->id }}"
                                                     action="{{ route('members.forceDestroy', $member->id) }}"
                                                     method="POST" class="hidden">
                                                     @csrf
@@ -125,34 +126,44 @@
     </div>
 </x-app-layout>
 <script>
-    // Obtenha o botão de exclusão
-    var destroyButton = document.getElementById('destroyButton');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtenha todos os botões de exclusão
+        var destroyButtons = document.querySelectorAll('.destroyButton');
 
-    // Obtenha o modal de confirmação
-    var modal = document.getElementById('confirmDestroyModal');
+        // Obtenha o modal de confirmação
+        var modal = document.getElementById('confirmDestroyModal');
 
-    // Obtenha o botão de cancelamento no modal
-    var cancelDestroyButton = document.getElementById('cancelDestroy');
+        // Obtenha o botão de cancelamento no modal
+        var cancelDestroyButton = document.getElementById('cancelDestroy');
 
-    // Obtenha o botão de confirmação no modal
-    var confirmDestroyButton = document.getElementById('confirmDestroy');
+        // Obtenha o botão de confirmação no modal
+        var confirmDestroyButton = document.getElementById('confirmDestroy');
 
-    // Quando o botão de exclusão for clicado
-    destroyButton.addEventListener('click', function() {
-        // Mostre o modal
-        modal.classList.remove('hidden');
-    });
+        // Variável para armazenar o ID do membro a ser excluído
+        var memberIdToDestroy;
 
-    // Quando o botão de cancelamento no modal for clicado
-    cancelDestroyButton.addEventListener('click', function() {
-        // Oculte o modal
-        modal.classList.add('hidden');
-    });
+        // Adicione evento de clique para cada botão de exclusão
+        destroyButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                // Obtenha o ID do membro a partir do ID do botão
+                memberIdToDestroy = this.id.split('-')[1];
 
-    // Quando o botão de confirmação no modal for clicado
-    confirmDestroyButton.addEventListener('click', function() {
-        // Envie o formulário de exclusão
-        var form = document.getElementById('destroyForm');
-        form.submit();
+                // Mostre o modal
+                modal.classList.remove('hidden');
+            });
+        });
+
+        // Quando o botão de cancelamento no modal for clicado
+        cancelDestroyButton.addEventListener('click', function() {
+            // Oculte o modal
+            modal.classList.add('hidden');
+        });
+
+        // Quando o botão de confirmação no modal for clicado
+        confirmDestroyButton.addEventListener('click', function() {
+            // Envie o formulário de exclusão correspondente
+            var form = document.getElementById('destroyForm-' + memberIdToDestroy);
+            form.submit();
+        });
     });
 </script>

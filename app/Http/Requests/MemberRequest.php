@@ -44,4 +44,29 @@ class MemberRequest extends FormRequest
             'profession' => 'nullable|string|max:255',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'cpf' => $this->removeFormatting($this->cpf),
+            'rg' => $this->removeFormatting($this->rg),
+            'phone' => $this->removeFormatting($this->phone),
+            'whatsapp' => $this->removeFormatting($this->whatsapp),
+            'address_zipcode' => $this->removeFormatting($this->address_zipcode),
+        ]);
+    }
+
+    /**
+     * Remove formatting from a given value.
+     *
+     * @param  string|null  $value
+     * @return string|null
+     */
+    protected function removeFormatting($value)
+    {
+        return $value ? preg_replace('/\D/', '', $value) : null;
+    }
 }

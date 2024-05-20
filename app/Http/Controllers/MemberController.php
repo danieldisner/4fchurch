@@ -46,16 +46,16 @@ class MemberController extends Controller
         } else {
             $photoPath = null;
         }
-
+        $validatedData = $request->validated();
 
         Member::create([
             'name' => $request->name,
-            'cpf' => $request->cpf,
-            'rg' => $request->rg,
+            'cpf' => $validatedData['cpf'],
+            'rg' => $validatedData['rg'],
             'email' => $request->email,
-            'phone' => $request->phone,
-            'whatsapp' => $request->whatsapp,
-            'address_zipcode' => $request->address_zipcode,
+            'phone' => $validatedData['phone'],
+            'whatsapp' => $validatedData['whatsapp'],
+            'address_zipcode' => $validatedData['address_zipcode'],
             'address_street' => $request->address_street,
             'address_number' => $request->address_number,
             'address_neighborhood' => $request->address_neighborhood,
@@ -97,6 +97,12 @@ class MemberController extends Controller
         $data = $request->all();
 
         if ($request->hasFile('photo')) {
+            if ($member->photo !== 'members/default.png' || $member->photo !== null) {
+                $oldPhotoPath = public_path('storage/' . $member->photo);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
+            }
             $photoName = uniqid() . '_' . $request->file('photo')->getClientOriginalName();
             $photoPath = $request->file('photo')->storeAs('members', $photoName, 'public');
             $data['photo'] = $photoPath;
@@ -143,6 +149,13 @@ class MemberController extends Controller
     {
         $member = Member::onlyTrashed()->findOrFail($id);
         $member->forceDelete();
+
+        if ($member->photo && $member->photo !== 'members/default.png') {
+            $photoPath = public_path('storage/' . $member->photo);
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+        }
 
         return redirect()->route('members.trash')->with('success', 'Deletado permanentemente.');
     }
