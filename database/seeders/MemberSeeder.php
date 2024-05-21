@@ -18,7 +18,7 @@ class MemberSeeder extends Seeder
         $statuses = Status::all();
 
         foreach ($statuses as $status) {
-            Member::factory()->count(10)->create([
+            Member::factory()->count(40)->create([
                 'status_id' => $statuses->random()->id
             ]);
         }

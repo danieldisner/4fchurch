@@ -259,7 +259,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             ${member.status ? `<span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${getStatusClass(member.status)}">${member.status.name}</span>` : ''}
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-500  whitespace-nowrap">
+                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                             <a href="${whatsappLink}" target="_blank" class="inline-flex text-blue-500 hover:underline">
                                 <svg class="mr-1" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                                     height="15" w viewBox="0 0 448 512">

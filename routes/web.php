@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FinanceController;
 use App\Models\Member;
 
 use App\Http\Middleware\CheckPermission;
@@ -50,6 +51,10 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('members/{id}/forceDestroy', [MemberController::class, 'forceDestroy'])->name('members.forceDestroy');
         Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
         Route::resource('members', MemberController::class);
+
+        Route::get('/finances', [FinanceController::class, 'index'])->name('finances.index');
+        Route::post('/finances/add', [FinanceController::class, 'store'])->name('finances.store');
+        Route::get('/finances/data', [FinanceController::class, 'fetchData'])->name('finances.data');
     });
 });
 

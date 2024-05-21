@@ -99,7 +99,7 @@
                             <div>
                                 <label for="city" class="block text-sm font-medium text-gray-700">Cidade</label>
                                 <input type="text" name="city" id="city" placeholder="Nome da Cidade"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm  placeholder:italic focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm placeholder:italic focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
                             <div>
                                 <label for="uf" class="block text-sm font-medium text-gray-700">Estado</label>
@@ -136,7 +136,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
                             <div>
                                 <label for="birthdate"
@@ -144,7 +143,6 @@
                                 <input type="date" name="birthdate" id="birthdate" required
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
-
                             <div>
                                 <label for="baptism_date"
                                     class="block text-sm font-medium text-gray-700">Batismo</label>
@@ -161,8 +159,6 @@
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Submit Button -->
                         <div class="flex justify-center mt-6">
                             <button type="submit"
                                 class="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">

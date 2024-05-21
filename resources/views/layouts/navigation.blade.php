@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('members.index')" :active="request()->routeIs('members.index')">
                         {{ __('Membros') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.index')">
+                        {{ __('Financeiro') }}
+                    </x-nav-link>
                     @if (auth()->user()->hasRole(['admin']))
                         <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')">
                             {{ __('Roles') }}
