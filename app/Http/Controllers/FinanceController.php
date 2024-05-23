@@ -49,4 +49,33 @@ class FinanceController extends Controller
             'saidas' => $saidas,
         ]);
     }
+
+    public function update(Request $request, $id)
+    {
+        $dateTransfer = $request->date_transfer;
+
+        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $dateTransfer)) {
+            try {
+                $dateTransfer = Carbon::createFromFormat('d/m/Y', $dateTransfer)->format('Y-m-d');
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Formato de data inválido. O formato correto é DD/MM/YYYY ou YYYY-MM-DD.'], 422);
+            }
+        }
+
+        $finance = Finance::find($id);
+
+        // Modifique a data de transferência na instância do modelo
+        $finance->date_transfer = $dateTransfer;
+
+        // Agora atualize os outros campos
+        $finance->update($request->only([
+            'transaction_type',
+            'title',
+            'source',
+            'value',
+            'description',
+        ]));
+
+        return response()->json(['success' => 'Transaction updated successfully']);
+    }
 }

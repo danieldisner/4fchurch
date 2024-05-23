@@ -45,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
     Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
+
     Route::middleware([CheckPermission::class])->group(function () {
         Route::get('members/trash', [MemberController::class, 'trash'])->name('members.trash');
         Route::put('members/{id}/restore', [MemberController::class, 'restore'])->name('members.restore');
@@ -54,7 +55,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/finances', [FinanceController::class, 'index'])->name('finances.index');
         Route::post('/finances/add', [FinanceController::class, 'store'])->name('finances.store');
-        Route::get('/finances/data', [FinanceController::class, 'fetchData'])->name('finances.data');
+        Route::post('/finances/{id}/update', [FinanceController::class, 'update'])->name('finances.update');
+        Route::get('/finances/data', [FinanceController::class, 'fetchData'])->name('finances.view');
     });
 });
 

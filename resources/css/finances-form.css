@@ -6,7 +6,7 @@
 
 fieldset {
     margin: 0;
-    padding: 1rem;
+    padding: 0.25;
     border: 1px solid #e5e7eb;
 }
 
@@ -14,4 +14,44 @@ legend {
     margin: 0 auto;
     padding: 0 0.5rem;
     text-align: center;
+}
+
+.table-input {
+    width: auto;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db; /* cor da borda mais clara */
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    background-color: #ffffff;
+}
+
+.table-input.text-input {
+    width: auto; /* Ajustar a largura para ocupar todo o espaço disponível */
+    max-width: 200px; /* Definir um limite máximo de largura */
+}
+
+.table-input.number-input {
+    width: auto;
+    max-width: 70px; /* Definir um limite máximo de largura */
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield; /* Chrome, Safari, Edge */
+}
+
+.table-input.select-input {
+    width: auto;
+    padding-right: 2rem;
+}
+
+/* Ajustar a célula que contém o input do título */
+.table-cell-title {
+    width: auto;
+    max-width: 150; /* Definir um limite máximo de largura */
+    white-space: nowrap;
+}
+
+.table-cell input,
+.table-cell select {
+    margin: 0; /* Remover margens internas dos inputs e selects */
+    padding: 0.25rem; /* Ajustar padding interno dos inputs e selects */
 }
