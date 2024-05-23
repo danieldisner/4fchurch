@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </td>
                     <td class="px-4 py-2 text-sm text-gray-900 table-cell"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" /></td>
+                    <td class="hidden">${entrada.description}</td>
                 </tr>
             `);
             entradasTotal += value;
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </td>
                     <td class="px-4 py-2 text-sm text-gray-900 table-cell"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" /></td>
+                    <td class="hidden">${saida.description}</td>
                 </tr>
             `);
             saidasTotal += value;
@@ -83,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const source = document.getElementById('source').value;
         const dateTransfer = document.getElementById('date_transfer').value;
         const value = parseFloat(document.getElementById('value').value.replace(',', '.')).toFixed(2);
+        const description = document.getElementById('description').value;
         const dateTransferISO = new Date(dateTransfer).toISOString().split('T')[0];
         console.log(dateTransferISO);
         if (isNaN(value)) {
@@ -95,7 +98,9 @@ document.addEventListener('DOMContentLoaded', function() {
             title: title,
             source: source,
             date_transfer: dateTransferISO,
-            value: value
+            value: value,
+            description: description
+
         };
 
         try {
@@ -133,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const dateTransfer = row.querySelector('td:nth-child(3)').textContent;
             const source = row.querySelector('td:nth-child(4) select').value;
             const value = row.querySelector('td:nth-child(5) input').value;
+            const description = row.querySelector('td:nth-child(6)').value;
 
             const formData = {
                 id: rowId,
@@ -140,7 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: title,
                 source: source,
                 date_transfer: dateTransfer,
-                value: value
+                value: value,
+                description: description
             };
 
             try {

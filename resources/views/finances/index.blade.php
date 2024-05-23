@@ -38,7 +38,7 @@
                             <label for="date_transfer" class="block text-sm font-medium text-gray-700">Data</label>
                             <input type="date" name="date_transfer" id="date_transfer" required
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                value="{{ now() }}">
+                                value="{{ date('Y-m-d') }}">
                         </div>
                         <div>
                             <label for="value" class="block text-sm font-medium text-gray-700">Valor</label>
