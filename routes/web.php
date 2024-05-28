@@ -57,6 +57,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/finances/{id}/update', [FinanceController::class, 'update'])->name('finances.update');
         Route::get('/finances/data', [FinanceController::class, 'fetchData'])->name('finances.view');
         Route::delete('/finances/{id}/delete', [FinanceController::class, 'destroy'])->name('finances.destroy');
+        Route::get('/finances/report', [FinanceController::class, 'report'])->name('finances.report');
+        Route::get('/finances/export-pdf', [FinanceController::class, 'exportPdf'])->name('finances.export.pdf');
+        Route::get('/finances/export-csv', [FinanceController::class, 'exportCsv'])->name('finances.export.csv');
+        Route::get('/finances/export-excel', [FinanceController::class, 'exportExcel'])->name('finances.export.excel');
+        Route::get('/finances/print', [FinanceController::class, 'printReport'])->name('finances.print');
     });
 });
 

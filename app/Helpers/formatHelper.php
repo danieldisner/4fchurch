@@ -58,3 +58,17 @@ if (!function_exists('formatRg')) {
         return preg_replace('/(\d{2})(\d{3})(\d{3})([0-9A-Za-z]{1})/', '$1.$2.$3-$4', $rg);
     }
 }
+
+if(!function_exists('formatDateBR')) {
+    function formatDateBR($date)
+    {
+        return date('d/m/Y', strtotime($date));
+    }
+}
+
+if(!function_exists('formatCurrencyBR')) {
+    function formatCurrencyBR($value)
+    {
+        return number_format($value, 2, ',', '.');
+    }
+}

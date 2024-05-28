@@ -1,3 +1,5 @@
+import { formatCPF, formatCep, formatRG, formatPhone, formatWhatsApp } from './formatting.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     function previewImage(event) {
         const input = event.target;
@@ -10,42 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         reader.readAsDataURL(input.files[0]);
-    }
-
-    function formatCPF(value) {
-        return value
-            .replace(/\D/g, '')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    }
-
-    function formatCep(value) {
-        return value
-            .replace(/\D/g, '')
-            .replace(/(\d{5})(\d)/, '$1-$2')
-            .replace(/(-\d{3})\d+?$/, '$1');
-    }
-
-    function formatRG(value){
-        const v = value.toUpperCase().replace(/[^\dX]/g,'');
-        return (v.length==8 || v.length==9)?
-           v.replace(/^(\d{1,2})(\d{3})(\d{3})([\dX])$/,'$1.$2.$3-$4'):
-           (value)
-        ;
-    }
-
-    function formatPhone(value) {
-        return value
-            .replace(/\D/g, '')
-            .replace(/(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{4,5})(\d{4})/, '$1-$2');
-    }
-
-    function formatWhatsApp(value) {
-        return value
-            .replace(/\D/g, '')
-            .replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
 
     async function fetchAddress() {

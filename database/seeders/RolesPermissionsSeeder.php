@@ -29,7 +29,7 @@ class RolesPermissionsSeeder extends Seeder
         $writerRole->permissions()->attach(Permission::whereIn('name',['view', 'create', 'edit', 'delete'])->get());
 
         $readerRole = Role::create(['name' => 'Reader']);
-        $readerRole->permissions()->attach(Permission::whereIn('name',['view'])->get());
+        $readerRole->permissions()->attach(Permission::whereIn('name',['view',])->get());
 
         $admin = User::create([
             'name' => 'Admin',

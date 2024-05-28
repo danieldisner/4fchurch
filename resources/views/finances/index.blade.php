@@ -158,21 +158,33 @@
                                 </table>
                             </fieldset>
                         </div>
-                        <footer class="mt-4">
+                        <footer class="mt-4 text-center">
                             <div class="p-4 px-6 py-5 text-center text-gray-800 bg-gray-200 border">
                                 <span class="inline-flex px-2 font-semibold leading-5 text-md">Saldo: R$ <span
                                         id="saldo-total">0,00</span></span>
                             </div>
-                            <div class="relative inline-block mt-4 text-left">
-                                <button
-                                    class="flex items-center px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
+                            <div class="relative items-center inline-block mt-4 text-center">
+                                <button id="export-button"
+                                    class="flex items-center justify-center px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         fill="currentColor" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                                         <path
                                             d="M9.293 0H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6.707a1 1 0 0 0-.293-.707L10 0.293A1 1 0 0 0 9.293 0zM8.5 0.5v4a1 1 0 0 0 1 1h4l-5-5zM3 9.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 12a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 14.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
                                     </svg>
-                                    <span class="ml-2">Exportar Relatório</span>
+                                    <span class="ml-2">Relatório</span>
                                 </button>
+                                <div id="report-options"
+                                    class="absolute inset-x-0 flex flex-col items-center hidden w-full mb-2 space-y-2 bottom-full md:flex-row md:justify-center">
+                                    <a href="#" id="export-csv"
+                                        class="block px-4 py-2 mt-2 mr-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">CSV</a>
+                                    <a href="#" id="export-excel"
+                                        class="block px-4 py-2 mr-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">EXCEL</a>
+                                    <a href="#" id="export-pdf"
+                                        class="block px-4 py-2 mr-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">PDF</a>
+                                    <a href="#" id="print-report"
+                                        class="block px-4 py-2 mr-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">IMPRIMIR</a>
+                                </div>
+
                             </div>
                         </footer>
                     </div>

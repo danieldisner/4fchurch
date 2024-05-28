@@ -111,3 +111,20 @@ legend {
     color: #000; /* Cor do texto para campos desabilitados */
     cursor: not-allowed; /* Cursor de não permitido para campos desabilitados */
 }
+
+.relative {
+    position: relative;
+}
+
+#report-options {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 10px;
+    z-index: 10;
+}
+
+#export-button:hover + #report-options,
+#report-options:hover {
+    display: flex;
+}

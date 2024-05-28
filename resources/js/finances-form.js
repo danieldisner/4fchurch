@@ -1,3 +1,5 @@
+import { formatCurrency, formatDate } from './formatting.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const fetchData = async () => {
         try {
@@ -26,11 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalSaidas = document.querySelector('#total-saidas');
         const saldoTotal = document.querySelector('#saldo-total');
 
-        const formatDate = (date) => {
-            const [year, month, day] = date.split('-');
-            return `${day}/${month}/${year}`;
-        };
-
         entradasTableBody.innerHTML = '';
         saidasTableBody.innerHTML = '';
 
@@ -47,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return `
                 <tr data-id="${data.id}" data-transaction-type="${transactionType}" class="hover:bg-gray-100">
                     <td class="hidden">${data.id}</td>
-                    <td class="px-1 py-2 text-sm text-gray-900 table-cell">${editButton} ${removeButton}</td>
+                    <td class="px-1 py-2 text-sm text-gray-900 table-cell">${removeButton}</td>
                     <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-title"><input type="text" value="${data.title}" class="editable table-input text-input" ${inputReadOnly} /></td>
                     <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-date">${formatDate(data.date_transfer)}</td>
                     <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-source">
@@ -56,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="Caixa" ${data.source === 'Caixa' ? 'selected' : ''}>Caixa</option>
                         </select>
                     </td>
-                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-value"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" ${inputReadOnly} /></td>
+                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-value"><input type="text" value="${formatCurrency(value)}" class="editable table-input number-input" ${inputReadOnly} /></td>
                     <td class="hidden transaction-description">${data.description}</td>
                 </tr>
             `;
@@ -72,9 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
             saidasTotal += parseFloat(saida.value);
         });
 
-        totalEntradas.textContent = entradasTotal.toFixed(2);
-        totalSaidas.textContent = saidasTotal.toFixed(2);
-        saldoTotal.textContent = (entradasTotal - saidasTotal).toFixed(2);
+        totalEntradas.textContent = formatCurrency(entradasTotal);
+        totalSaidas.textContent = formatCurrency(saidasTotal);
+        saldoTotal.textContent = formatCurrency(entradasTotal - saidasTotal);
     };
 
     const extractRowData = (row) => {
@@ -82,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
             id: row.dataset.id,
             transaction_type: row.dataset.transactionType,
             title: row.querySelector('.transaction-title input')?.value || '',
-            date_transfer: row.querySelector('.transaction-date')?.textContent || '',
+            date_transfer: row.querySelector('.transaction-date')?.textContent.split('/').reverse().join('-') || '',
             source: row.querySelector('.transaction-source select')?.value || '',
-            value: row.querySelector('.transaction-value input')?.value || '',
+            value: row.querySelector('.transaction-value input')?.value.replace('.', '').replace(',', '.') || '',
             description: row.querySelector('.transaction-description')?.textContent || ''
         };
     };
@@ -164,25 +161,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                    const response = await fetch(`/finances/${rowData.id}/update`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify(rowData)
-                    });
+                const response = await fetch(`/finances/${rowData.id}/update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(rowData)
+                });
 
-                    if (!response.ok) {
-                        throw new Error('Erro ao enviar os dados');
-                    }
-
-                    fetchData();
-                    showMessage('Dados atualizados com sucesso', 'success');
-                } catch (error) {
-                    console.error('Erro ao enviar os dados:', error);
-                    showMessage(error.message, 'error');
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar os dados');
                 }
+
+                fetchData();
+                showMessage('Dados atualizados com sucesso', 'success');
+            } catch (error) {
+                console.error('Erro ao enviar os dados:', error);
+                showMessage(error.message, 'error');
+            }
         });
     });
 
@@ -193,25 +190,62 @@ document.addEventListener('DOMContentLoaded', function() {
                 const rowId = row.dataset.id;
 
                 try {
-                        const response = await fetch(`/finances/${rowId}/delete`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Erro ao remover o dado');
+                    const response = await fetch(`/finances/${rowId}/delete`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
+                    });
 
-                        row.remove();
-                        fetchData();
-                        showMessage('Dado removido com sucesso', 'success');
-                    } catch (error) {
-                        console.error('Erro ao remover o dado:', error);
-                        showMessage(error.message, 'error');
+                    if (!response.ok) {
+                        throw new Error('Erro ao remover o dado');
                     }
+
+                    row.remove();
+                    fetchData();
+                    showMessage('Dado removido com sucesso', 'success');
+                } catch (error) {
+                    console.error('Erro ao remover o dado:', error);
+                    showMessage(error.message, 'error');
+                }
             }
         });
+    });
+
+    const exportButton = document.getElementById('export-button');
+    const reportOptions = document.getElementById('report-options');
+
+    const showReportOptions = () => {
+        reportOptions.style.display = 'flex';
+    };
+
+    const hideReportOptions = () => {
+        reportOptions.style.display = 'none';
+    };
+
+    exportButton.addEventListener('mouseenter', showReportOptions);
+
+    exportButton.addEventListener('mouseleave', () => {
+        setTimeout(hideReportOptions, 3000);
+    });
+
+    document.getElementById('export-pdf').addEventListener('click', function() {
+        const date = document.getElementById('date_transfer').value;
+        window.location.href = `/finances/export-pdf?date=${date}`;
+    });
+
+    document.getElementById('export-csv').addEventListener('click', function() {
+        const date = document.getElementById('date_transfer').value;
+        window.location.href = `/finances/export-csv?date=${date}`;
+    });
+
+    document.getElementById('export-excel').addEventListener('click', function() {
+        const date = document.getElementById('date_transfer').value;
+        window.location.href = `/finances/export-excel?date=${date}`;
+    });
+
+    document.getElementById('print-report').addEventListener('click', function() {
+        const date = document.getElementById('date_transfer').value;
+        window.location.href = `/finances/print?date=${date}`;
     });
 });

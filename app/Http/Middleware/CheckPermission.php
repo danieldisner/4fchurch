@@ -55,6 +55,9 @@ class CheckPermission
             'restore' => 'restore',
             'forceDestroy' => 'forceDestroy',
             'search' => 'view',
+            'report' => 'view',
+            'export' => 'view',
+            'print' => 'view',
             // Add more mappings as needed
         ];
 
