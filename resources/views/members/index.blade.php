@@ -58,7 +58,7 @@
                     </thead>
                     <tbody id="members-list" class="bg-white divide-y divide-gray-200">
                         @foreach ($members as $member)
-                            <tr>
+                            <tr class="hover:bg-gray-100">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 w-10 h-10">

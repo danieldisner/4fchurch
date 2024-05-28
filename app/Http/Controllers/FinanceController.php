@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Finance;
 use Carbon\Carbon;
 
@@ -31,30 +33,38 @@ class FinanceController extends Controller
 
     public function fetchData(Request $request)
     {
+        $user = Auth::user();
+
+        $editPermission = $user->hasAnyPermission(['edit']);
+        $deletePermission = $user->hasAnyPermission(['delete']);
+
         $date = $request->input('date');
         $month = date('m', strtotime($date));
         $year = date('Y', strtotime($date));
 
-        $entradas = Finance::whereYear('date_transfer', $year)
+        $entries = Finance::whereYear('date_transfer', $year)
             ->whereMonth('date_transfer', $month)
             ->where('transaction_type', 'Entrada')
             ->get();
 
-        $saidas = Finance::whereYear('date_transfer', $year)
+        $withdrawals = Finance::whereYear('date_transfer', $year)
             ->whereMonth('date_transfer', $month)
             ->where('transaction_type', 'Saída')
             ->get();
 
         return response()->json([
-            'entradas' => $entradas,
-            'saidas' => $saidas,
+            'entradas' => $entries,
+            'saidas' => $withdrawals,
+            'permissions' => [
+                'edit' => $editPermission,
+                'delete' => $deletePermission,
+            ],
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $dateTransfer = $request->date_transfer;
-
         if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $dateTransfer)) {
             try {
                 $dateTransfer = Carbon::createFromFormat('d/m/Y', $dateTransfer)->format('Y-m-d');
@@ -62,13 +72,8 @@ class FinanceController extends Controller
                 return response()->json(['error' => 'Formato de data inválido. O formato correto é DD/MM/YYYY ou YYYY-MM-DD.'], 422);
             }
         }
-
         $finance = Finance::find($id);
-
-        // Modifique a data de transferência na instância do modelo
         $finance->date_transfer = $dateTransfer;
-
-        // Agora atualize os outros campos
         $finance->update($request->only([
             'transaction_type',
             'title',
@@ -76,7 +81,14 @@ class FinanceController extends Controller
             'value',
             'description',
         ]));
-
         return response()->json(['success' => 'Transaction updated successfully']);
+    }
+
+    public function destroy($id)
+    {
+        $finance = Finance::findOrFail($id);
+        $finance->delete();
+
+        return response()->json(['success' => 'Registro removido com sucesso']);
     }
 }

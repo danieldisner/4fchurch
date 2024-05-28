@@ -4,13 +4,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const date = document.getElementById('date_transfer').value;
             const response = await fetch(`/finances/data?date=${date}`);
             const data = await response.json();
-            updateTables(data.entradas, data.saidas);
+            updateTables(data.entradas, data.saidas, data.permissions);
         } catch (error) {
             console.error('Error fetching data:', error);
+            showMessage(error.message, 'error');
         }
     };
 
-    const updateTables = (entradas, saidas) => {
+    const createEditButton = (permissions) => {
+        return permissions.edit ? `<button class="edit-button">E</button>` : '';
+    };
+
+    const createRemoveButton = (permissions) => {
+        return permissions.delete ? `<button class="remove-button">-</button>` : '';
+    };
+
+    const updateTables = (entradas, saidas, permissions) => {
         const entradasTableBody = document.querySelector('#entradas-table tbody');
         const saidasTableBody = document.querySelector('#saidas-table tbody');
         const totalEntradas = document.querySelector('#total-entradas');
@@ -28,44 +37,39 @@ document.addEventListener('DOMContentLoaded', function() {
         let entradasTotal = 0;
         let saidasTotal = 0;
 
-        entradas.forEach(entrada => {
-            const value = parseFloat(entrada.value);
-            entradasTableBody.insertAdjacentHTML('beforeend', `
-                <tr data-id="${entrada.id}" data-transaction-type="Entrada" class="hover:bg-gray-100">
-                    <td class="hidden">${entrada.id}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell table-cell-title"><input type="text" value="${entrada.title}" class="editable table-input text-input" /></td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell">${formatDate(entrada.date_transfer)}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell">
-                        <select class="editable table-input select-input">
-                            <option value="Banco" ${entrada.source === 'Banco' ? 'selected' : ''}>Banco</option>
-                            <option value="Caixa" ${entrada.source === 'Caixa' ? 'selected' : ''}>Caixa</option>
+        const renderRow = (data, transactionType, permissions) => {
+            const value = parseFloat(data.value);
+            const editButton = createEditButton(permissions);
+            const removeButton = createRemoveButton(permissions);
+            const inputReadOnly = permissions.edit ? '' : 'readonly';
+            const inputDisabled = permissions.edit ? '' : 'disabled';
+
+            return `
+                <tr data-id="${data.id}" data-transaction-type="${transactionType}" class="hover:bg-gray-100">
+                    <td class="hidden">${data.id}</td>
+                    <td class="px-1 py-2 text-sm text-gray-900 table-cell">${editButton} ${removeButton}</td>
+                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-title"><input type="text" value="${data.title}" class="editable table-input text-input" ${inputReadOnly} /></td>
+                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-date">${formatDate(data.date_transfer)}</td>
+                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-source">
+                        <select class="editable table-input select-input" ${inputDisabled}>
+                            <option value="Banco" ${data.source === 'Banco' ? 'selected' : ''}>Banco</option>
+                            <option value="Caixa" ${data.source === 'Caixa' ? 'selected' : ''}>Caixa</option>
                         </select>
                     </td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" /></td>
-                    <td class="hidden">${entrada.description}</td>
+                    <td class="px-2 py-2 text-sm text-gray-900 table-cell transaction-value"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" ${inputReadOnly} /></td>
+                    <td class="hidden transaction-description">${data.description}</td>
                 </tr>
-            `);
-            entradasTotal += value;
+            `;
+        };
+
+        entradas.forEach(entrada => {
+            entradasTableBody.insertAdjacentHTML('beforeend', renderRow(entrada, 'Entrada', permissions));
+            entradasTotal += parseFloat(entrada.value);
         });
 
         saidas.forEach(saida => {
-            const value = parseFloat(saida.value);
-            saidasTableBody.insertAdjacentHTML('beforeend', `
-                <tr data-id="${saida.id}" data-transaction-type="Saída" class="hover:bg-gray-100">
-                    <td class="hidden">${saida.id}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell table-cell-title"><input type="text" value="${saida.title}" class="editable table-input text-input" /></td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell">${formatDate(saida.date_transfer)}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell">
-                        <select class="editable table-input select-input">
-                            <option value="Banco" ${saida.source === 'Banco' ? 'selected' : ''}>Banco</option>
-                            <option value="Caixa" ${saida.source === 'Caixa' ? 'selected' : ''}>Caixa</option>
-                        </select>
-                    </td>
-                    <td class="px-4 py-2 text-sm text-gray-900 table-cell"><input type="number" value="${value.toFixed(2)}" class="editable table-input number-input" step="0.01" /></td>
-                    <td class="hidden">${saida.description}</td>
-                </tr>
-            `);
-            saidasTotal += value;
+            saidasTableBody.insertAdjacentHTML('beforeend', renderRow(saida, 'Saída', permissions));
+            saidasTotal += parseFloat(saida.value);
         });
 
         totalEntradas.textContent = entradasTotal.toFixed(2);
@@ -73,75 +77,38 @@ document.addEventListener('DOMContentLoaded', function() {
         saldoTotal.textContent = (entradasTotal - saidasTotal).toFixed(2);
     };
 
+    const extractRowData = (row) => {
+        return {
+            id: row.dataset.id,
+            transaction_type: row.dataset.transactionType,
+            title: row.querySelector('.transaction-title input')?.value || '',
+            date_transfer: row.querySelector('.transaction-date')?.textContent || '',
+            source: row.querySelector('.transaction-source select')?.value || '',
+            value: row.querySelector('.transaction-value input')?.value || '',
+            description: row.querySelector('.transaction-description')?.textContent || ''
+        };
+    };
+
     fetchData();
 
     const financeForm = document.getElementById('finance-form');
+    if (financeForm) {
+        financeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-    financeForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+            const transactionType = document.getElementById('transaction_type').value;
+            const title = document.getElementById('title').value;
+            const source = document.getElementById('source').value;
+            const dateTransfer = document.getElementById('date_transfer').value;
+            const value = parseFloat(document.getElementById('value').value.replace(',', '.')).toFixed(2);
+            const description = document.getElementById('description').value;
 
-        const transactionType = document.getElementById('transaction_type').value;
-        const title = document.getElementById('title').value;
-        const source = document.getElementById('source').value;
-        const dateTransfer = document.getElementById('date_transfer').value;
-        const value = parseFloat(document.getElementById('value').value.replace(',', '.')).toFixed(2);
-        const description = document.getElementById('description').value;
-        const dateTransferISO = new Date(dateTransfer).toISOString().split('T')[0];
-        console.log(dateTransferISO);
-        if (isNaN(value)) {
-            alert('Por favor, insira um valor válido.');
-            return;
-        }
-
-        const formData = {
-            transaction_type: transactionType,
-            title: title,
-            source: source,
-            date_transfer: dateTransferISO,
-            value: value,
-            description: description
-
-        };
-
-        try {
-            const response = await fetch('/finances/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao enviar os dados');
+            if (isNaN(value)) {
+                showMessage('Por favor, insira um valor válido.', 'error');
+                return;
             }
-            financeForm.reset();
-            document.getElementById('date_transfer').value = dateTransfer;
-            fetchData();
-        } catch (error) {
-            console.error('Erro ao enviar os dados:', error);
-        }
-    });
-
-    document.getElementById('date_transfer').addEventListener('change', fetchData);
-
-    document.querySelectorAll('#entradas-table tbody, #saidas-table tbody').forEach(tbody => {
-        tbody.addEventListener('change', async event => {
-            const cell = event.target.closest('input, select');
-            if (!cell) return;
-
-            const row = cell.closest('tr');
-            const rowId = row.dataset.id;
-            const transactionType = row.dataset.transactionType;
-            const title = row.querySelector('td:nth-child(2) input').value;
-            const dateTransfer = row.querySelector('td:nth-child(3)').textContent;
-            const source = row.querySelector('td:nth-child(4) select').value;
-            const value = row.querySelector('td:nth-child(5) input').value;
-            const description = row.querySelector('td:nth-child(6)').value;
 
             const formData = {
-                id: rowId,
                 transaction_type: transactionType,
                 title: title,
                 source: source,
@@ -151,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             try {
-                const response = await fetch(`/finances/${rowId}/update`, {
+                const response = await fetch('/finances/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -163,13 +130,88 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!response.ok) {
                     throw new Error('Erro ao enviar os dados');
                 }
+
+                financeForm.reset();
+                document.getElementById('date_transfer').value = dateTransfer;
                 fetchData();
-                console.log('Dados enviados com sucesso');
+                showMessage('Dados enviados com sucesso', 'success');
             } catch (error) {
                 console.error('Erro ao enviar os dados:', error);
+                showMessage(error.message, 'error');
             }
+        });
+    }
+
+    document.getElementById('date_transfer').addEventListener('change', fetchData);
+
+    document.querySelectorAll('#entradas-table tbody, #saidas-table tbody').forEach(tbody => {
+        tbody.addEventListener('change', async event => {
+            const cell = event.target.closest('input, select');
+            if (!cell) return;
+
+            const row = cell.closest('tr');
+            if (!row) {
+                console.error('Row not found for cell:', cell);
+                showMessage('Linha não encontrada para a célula.', 'error');
+                return;
+            }
+
+            const rowData = extractRowData(row);
+            if (!rowData.id) {
+                console.error('Row ID not found:', rowData);
+                showMessage('ID da linha não encontrado.', 'error');
+                return;
+            }
+
+            try {
+                    const response = await fetch(`/finances/${rowData.id}/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(rowData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erro ao enviar os dados');
+                    }
+
+                    fetchData();
+                    showMessage('Dados atualizados com sucesso', 'success');
+                } catch (error) {
+                    console.error('Erro ao enviar os dados:', error);
+                    showMessage(error.message, 'error');
+                }
         });
     });
 
+    document.querySelectorAll('#entradas-table tbody, #saidas-table tbody').forEach(tbody => {
+        tbody.addEventListener('click', async event => {
+            if (event.target.matches('.remove-button')) {
+                const row = event.target.closest('tr');
+                const rowId = row.dataset.id;
 
+                try {
+                        const response = await fetch(`/finances/${rowId}/delete`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erro ao remover o dado');
+                        }
+
+                        row.remove();
+                        fetchData();
+                        showMessage('Dado removido com sucesso', 'success');
+                    } catch (error) {
+                        console.error('Erro ao remover o dado:', error);
+                        showMessage(error.message, 'error');
+                    }
+            }
+        });
+    });
 });

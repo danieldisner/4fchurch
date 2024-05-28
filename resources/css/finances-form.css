@@ -1,57 +1,113 @@
+/* Responsividade para layouts maiores */
 @media (min-width: 768px) {
     .md\\:grid-cols-2 {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
     }
 }
 
+/* Estilização do fieldset */
 fieldset {
     margin: 0;
-    padding: 0.25;
+    padding: 0.25rem;
     border: 1px solid #e5e7eb;
 }
 
+/* Estilização da legenda */
 legend {
     margin: 0 auto;
     padding: 0 0.5rem;
     text-align: center;
 }
 
+/* Tabela com layout fixo */
+.table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Estilização das células da tabela */
+.table th,
+.table td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* Estilização dos inputs nas células da tabela */
 .table-input {
     width: auto;
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
-    border: 1px solid #d1d5db; /* cor da borda mais clara */
+    border: 1px solid #d1d5db;
     border-radius: 0.25rem;
     box-sizing: border-box;
     background-color: #ffffff;
 }
 
+/* Especificação de largura máxima para inputs de texto */
 .table-input.text-input {
-    width: auto; /* Ajustar a largura para ocupar todo o espaço disponível */
-    max-width: 200px; /* Definir um limite máximo de largura */
+    max-width: 200px;
 }
 
+/* Especificação de largura máxima para inputs numéricos */
 .table-input.number-input {
-    width: auto;
-    max-width: 70px; /* Definir um limite máximo de largura */
-    -moz-appearance: textfield; /* Firefox */
-    appearance: textfield; /* Chrome, Safari, Edge */
+    max-width: 70px;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
+/* Estilização dos selects */
 .table-input.select-input {
-    width: auto;
     padding-right: 2rem;
 }
 
-/* Ajustar a célula que contém o input do título */
+/* Especificação de largura máxima para títulos das células */
 .table-cell-title {
-    width: auto;
-    max-width: 150; /* Definir um limite máximo de largura */
-    white-space: nowrap;
+    max-width: 150px;
 }
 
+/* Estilização de inputs e selects dentro das células da tabela */
 .table-cell input,
 .table-cell select {
-    margin: 0; /* Remover margens internas dos inputs e selects */
-    padding: 0.25rem; /* Ajustar padding interno dos inputs e selects */
+    margin: 0;
+    padding: 0.25rem;
+    width: 100%;
+}
+
+/* Estilização do botão de remoção */
+.remove-button,
+.edit-button {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    border-radius: 9999px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.remove-button:hover,
+.edit-button:hover {
+    background-color: #d1d5db;
+}
+
+.remove-button:focus,
+.edit-button:focus {
+    outline: none;
+    ring: 2px solid #6b7280;
+    ring-opacity: 75%;
+}
+
+/* Estilização para campos desabilitados ou somente leitura */
+.table-cell input:disabled,
+.table-cell select:disabled,
+.table-cell input[readonly],
+.table-cell select[readonly] {
+    background-color: #f3f4f6; /* Cor de fundo para campos desabilitados */
+    color: #000; /* Cor do texto para campos desabilitados */
+    cursor: not-allowed; /* Cursor de não permitido para campos desabilitados */
 }
