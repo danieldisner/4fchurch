@@ -56,11 +56,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            padding-right: 10px;
+            padding-left: 10px;
         }
 
         .header img {
             max-height: 40px;
-            /* Redução da altura da imagem */
         }
 
         .header .info {
@@ -100,7 +101,7 @@
 </head>
 
 <body>
-    <div class="header">
+    <div class=" header">
         <img src="{{ $logoPath }}" alt="Logo do Sistema">
         <div class="info">
             <div>{{ Auth::user()->name }}</div>
@@ -108,8 +109,8 @@
             <div>Data de Emissão: <?php echo date('d/m/Y'); ?></div>
         </div>
     </div>
-    <h1>Relatório de Finanças</h1>
     <div class="container">
+        <h1>Relatório de Finanças</h1>
         <div class="table-container">
             <table>
                 <thead>
@@ -179,8 +180,6 @@
                 {{ formatCurrencyBR($entries->sum('value') - $withdrawals->sum('value')) }}</div>
         </div>
     </div>
-
-
 </body>
 
 </html>
