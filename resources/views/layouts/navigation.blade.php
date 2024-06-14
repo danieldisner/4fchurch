@@ -18,7 +18,7 @@
                     <x-nav-link :href="route('members.index')" :active="request()->routeIs('members.index')">
                         {{ __('Membros') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.index')">
+                    <x-nav-link :href="route('finances.dashboard')" :active="request()->routeIs('finances.dashboard')">
                         {{ __('Financeiro') }}
                     </x-nav-link>
                     @if (auth()->user()->hasRole(['admin']))

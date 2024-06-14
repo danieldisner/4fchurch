@@ -8,6 +8,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Finance;
 use Carbon\Carbon;
 use App\Exports\FinanceExport;
+use Illuminate\Support\Facades\DB;
+
 class FinanceController extends Controller
 {
     public function index()
@@ -91,19 +93,22 @@ class FinanceController extends Controller
 
         return response()->json(['success' => 'Registro removido com sucesso']);
     }
-    public function report(Request $request , $view = true)
+    public function report(Request $request, $view = true)
     {
         $date = $request->input('date');
-        $month = date('m', strtotime($date));
-        $year = date('Y', strtotime($date));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $entries = Finance::whereYear('date_transfer', $year)
-            ->whereMonth('date_transfer', $month)
+        if ($date) {
+            $startDate = date('Y-m-01', strtotime($date));
+            $endDate = date('Y-m-t', strtotime($date));
+        }
+
+        $entries = Finance::whereBetween('date_transfer', [$startDate, $endDate])
             ->where('transaction_type', 'Entrada')
             ->get();
 
-        $withdrawals = Finance::whereYear('date_transfer', $year)
-            ->whereMonth('date_transfer', $month)
+        $withdrawals = Finance::whereBetween('date_transfer', [$startDate, $endDate])
             ->where('transaction_type', 'Saída')
             ->get();
 
@@ -114,12 +119,11 @@ class FinanceController extends Controller
         $caixa_total = $caixa_entries - $caixa_withdrawals;
         $banco_total = $banco_entries - $banco_withdrawals;
 
-        // By default, is view, the logo is stored in storage/company/default.png
-        // If view is false, will use the public path of the logo to render in the PDF
         $logoPath = $view ? asset('storage\company\default.png') : public_path('storage\company\default.png');
 
-        return view('finances.report', compact('caixa_total', 'banco_total', 'entries', 'withdrawals', 'month', 'year', 'logoPath'));
+        return view('finances.report', compact('caixa_total', 'banco_total', 'entries', 'withdrawals','startDate', 'endDate',  'logoPath'));
     }
+
 
     public function exportPdf(Request $request)
     {
@@ -144,4 +148,135 @@ class FinanceController extends Controller
     {
         return $this->report($request);
     }
+
+    public function dashboard(Request $request)
+    {
+        $startDate = $request->input('start_date') ?: now()->startOfYear()->format('Y-m-d');
+        $endDate = $request->input('end_date') ?: now()->endOfYear()->format('Y-m-d');
+
+        $titlesData = Finance::whereBetween('date_transfer', [$startDate, $endDate])
+                            ->whereIn('transaction_type', ['Entrada', 'Saída'])
+                            ->groupBy('title', 'transaction_type')
+                            ->selectRaw('title, transaction_type, SUM(value) as total')
+                            ->get();
+
+        $entriesData = $this->normalizeAndGroupEntries($titlesData);
+        $expensesData = $this->normalizeAndGroupExpenses($titlesData);
+
+        $groupedEntriesData = $this->groupTopFour($entriesData);
+        $groupedExpensesData = $this->groupTopFour($expensesData);
+
+        $saldoData = Finance::whereBetween('date_transfer', [$startDate, $endDate])
+                            ->whereIn('source', ['Banco', 'Caixa'])
+                            ->selectRaw('source, SUM(CASE WHEN transaction_type = "Entrada" THEN value ELSE -value END) as saldo')
+                            ->groupBy('source')
+                            ->pluck('saldo', 'source');
+
+        return view('finances.dashboard', [
+            'entriesData' => $groupedEntriesData,
+            'expensesData' => $groupedExpensesData,
+            'saldoBanco' => $saldoData['Banco'] ?? 0,
+            'saldoCaixa' => $saldoData['Caixa'] ?? 0,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
+    }
+
+    private function normalizeAndGroupEntries($data)
+    {
+        $groupedData = [];
+
+        foreach ($data as $item) {
+            if ($item->transaction_type === 'Entrada') {
+                $normalizedTitle = $this->normalizeString($item->title);
+
+                if (!isset($groupedData[$normalizedTitle])) {
+                    $groupedData[$normalizedTitle] = [
+                        'title' => $item->title,
+                        'total' => 0
+                    ];
+                }
+
+                $groupedData[$normalizedTitle]['total'] += $item->total;
+            }
+        }
+
+        return array_values($groupedData);
+    }
+
+    private function normalizeAndGroupExpenses($data)
+    {
+        $groupedData = [];
+
+        foreach ($data as $item) {
+            if ($item->transaction_type === 'Saída') {
+                $normalizedTitle = $this->normalizeString($item->title);
+                $categoryKey = $this->identifyPrefix($normalizedTitle);
+
+                if (!isset($groupedData[$categoryKey])) {
+                    $groupedData[$categoryKey] = [
+                        'title' => ucfirst($categoryKey),
+                        'total' => 0
+                    ];
+                }
+
+                $groupedData[$categoryKey]['total'] += $item->total;
+            }
+        }
+
+        return array_values($groupedData);
+    }
+
+    private function normalizeString($string)
+    {
+        $string = strtolower($string);
+        $string = str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'ã', 'õ', 'ç', 'à', 'è', 'ì', 'ò', 'ù', 'ä', 'ë', 'ï', 'ö', 'ü'],
+            ['a', 'e', 'i', 'o', 'u', 'a', 'o', 'c', 'a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u'],
+            $string
+        );
+        return preg_replace('/[^a-z0-9 ]+/', '', $string);
+    }
+
+    private function identifyPrefix($string)
+    {
+        $prefixes = [
+            'despesas' => ['despesa', 'despesas'],
+            'pagamentos' => ['pagamento', 'pagamentos'],
+            'entradas' => ['entrada', 'entradas'],
+            'contas' => ['conta', 'contas'],
+            'materiais' => ['material', 'materiais'],
+            'outros' => ['outros']
+        ];
+
+        foreach ($prefixes as $key => $values) {
+            foreach ($values as $value) {
+                if (strpos($string, $value) === 0) {
+                    return $key;
+                }
+            }
+        }
+        return 'outros';
+    }
+
+    private function groupTopFour($data)
+    {
+        usort($data, function ($a, $b) {
+            return $b['total'] <=> $a['total'];
+        });
+
+        $topFour = array_slice($data, 0, 4);
+        $others = array_slice($data, 4);
+
+        $othersTotal = array_sum(array_column($others, 'total'));
+
+        if ($others) {
+            $topFour[] = [
+                'title' => 'Outros',
+                'total' => $othersTotal
+            ];
+        }
+        return $topFour;
+    }
+
 }

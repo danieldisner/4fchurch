@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Adicionando eventos aos elementos
     const cpfInput = document.getElementById('cpf');
     const rgInput = document.getElementById('rg');
     const phoneInput = document.getElementById('phone');

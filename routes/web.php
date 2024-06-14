@@ -53,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('members', MemberController::class);
 
         Route::get('/finances', [FinanceController::class, 'index'])->name('finances.index');
+        Route::get('/finances/dashboard', [FinanceController::class, 'dashboard'])->name('finances.dashboard');
         Route::post('/finances/add', [FinanceController::class, 'store'])->name('finances.store');
         Route::post('/finances/{id}/update', [FinanceController::class, 'update'])->name('finances.update');
         Route::get('/finances/data', [FinanceController::class, 'fetchData'])->name('finances.view');
@@ -62,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/finances/export-csv', [FinanceController::class, 'exportCsv'])->name('finances.export.csv');
         Route::get('/finances/export-excel', [FinanceController::class, 'exportExcel'])->name('finances.export.excel');
         Route::get('/finances/print', [FinanceController::class, 'printReport'])->name('finances.print');
+
     });
 });
 

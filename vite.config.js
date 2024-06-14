@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/member-form.js',
                 'resources/js/finances-form.js',
+                'resources/js/export-report.js',
             ],
             refresh: true,
         }),

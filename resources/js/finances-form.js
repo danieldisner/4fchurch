@@ -211,41 +211,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    const exportButton = document.getElementById('export-button');
-    const reportOptions = document.getElementById('report-options');
-
-    const showReportOptions = () => {
-        reportOptions.style.display = 'flex';
-    };
-
-    const hideReportOptions = () => {
-        reportOptions.style.display = 'none';
-    };
-
-    exportButton.addEventListener('mouseenter', showReportOptions);
-
-    exportButton.addEventListener('mouseleave', () => {
-        setTimeout(hideReportOptions, 3000);
-    });
-
-    document.getElementById('export-pdf').addEventListener('click', function() {
-        const date = document.getElementById('date_transfer').value;
-        window.location.href = `/finances/export-pdf?date=${date}`;
-    });
-
-    document.getElementById('export-csv').addEventListener('click', function() {
-        const date = document.getElementById('date_transfer').value;
-        window.location.href = `/finances/export-csv?date=${date}`;
-    });
-
-    document.getElementById('export-excel').addEventListener('click', function() {
-        const date = document.getElementById('date_transfer').value;
-        window.location.href = `/finances/export-excel?date=${date}`;
-    });
-
-    document.getElementById('print-report').addEventListener('click', function() {
-        const date = document.getElementById('date_transfer').value;
-        window.location.href = `/finances/print?date=${date}`;
-    });
 });

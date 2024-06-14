@@ -1,9 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Finanças') }}
-        </h2>
-        @vite(['resources/css/finances-form.css'])
+        @vite(['resources/css/finances-form.css', 'resources/js/export-report.js'])
+        <nav x-data="{ open: false }">
+            <div class="flex">
+                <x-nav-link :href="route('finances.dashboard')" :active="request()->routeIs('finances.dashboard')" class="mr-4 h2">
+                    <h2>{{ __('Financeiro') }}</h2>
+                </x-nav-link>
+                <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.index')">
+                    {{ __('Lançamentos') }}
+                </x-nav-link>
+            </div>
+        </nav>
     </x-slot>
     <div class="py-12 pt-1">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -184,12 +191,10 @@
                                     <a href="#" id="print-report"
                                         class="block px-4 py-2 mr-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">IMPRIMIR</a>
                                 </div>
-
                             </div>
                         </footer>
                     </div>
                 </div>
             </div>
         </div>
-        @vite(['resources/js/finances-form.js'])
 </x-app-layout>
