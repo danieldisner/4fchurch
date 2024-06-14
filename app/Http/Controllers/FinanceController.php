@@ -106,10 +106,12 @@ class FinanceController extends Controller
 
         $entries = Finance::whereBetween('date_transfer', [$startDate, $endDate])
             ->where('transaction_type', 'Entrada')
+            ->orderBy('date_transfer') // Ordena as entradas por data
             ->get();
 
         $withdrawals = Finance::whereBetween('date_transfer', [$startDate, $endDate])
             ->where('transaction_type', 'Saída')
+            ->orderBy('date_transfer') // Ordena as saídas por data
             ->get();
 
         $caixa_entries = $entries->where('source', 'Caixa')->sum('value');
@@ -124,24 +126,45 @@ class FinanceController extends Controller
         return view('finances.report', compact('caixa_total', 'banco_total', 'entries', 'withdrawals','startDate', 'endDate',  'logoPath'));
     }
 
-
     public function exportPdf(Request $request)
     {
+        $date = $request->input('date');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        if ($date) {
+            $startDate = date('Y-m-01', strtotime($date));
+            $endDate = date('Y-m-t', strtotime($date));
+        }
+
         $view = $this->report($request, false)->render();
         $pdf = PDF::loadHTML($view);
-        return $pdf->download('relatorio_financeiro_' . date('m_Y', strtotime($request->input('date'))) . '.pdf');
+        return $pdf->download('relatorio_financeiro_' . date('m-Y', strtotime($startDate)) . '_' . date('m-Y', strtotime($endDate)) .'pdf');
     }
 
     public function exportCsv(Request $request)
     {
         $date = $request->input('date');
-        return Excel::download(new FinanceExport($date), 'relatorio_financeiro_' . date('m_Y', strtotime($date)) . '.csv', \Maatwebsite\Excel\Excel::CSV);
-    }
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        if ($date) {
+            $startDate = date('Y-m-01', strtotime($date));
+            $endDate = date('Y-m-t', strtotime($date));
+        }
+        return Excel::download(new FinanceExport($startDate, $endDate), 'relatorio_financeiro_' . date('m-Y', strtotime($startDate)) . '_' . date('m-Y', strtotime($endDate)) . '.csv', \Maatwebsite\Excel\Excel::CSV);    }
 
     public function exportExcel(Request $request)
     {
         $date = $request->input('date');
-        return Excel::download(new FinanceExport($date), 'relatorio_financeiro_' . date('m_Y', strtotime($date)) . '.xlsx');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        if ($date) {
+            $startDate = date('Y-m-01', strtotime($date));
+            $endDate = date('Y-m-t', strtotime($date));
+        }
+        return Excel::download(new FinanceExport($startDate, $endDate), 'relatorio_financeiro_' . date('m-Y', strtotime($startDate)) . '_' . date('m-Y', strtotime($endDate)) . '.xlsx');
     }
 
     public function printReport(Request $request)

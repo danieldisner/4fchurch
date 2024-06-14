@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        @vite(['resources/css/finances-form.css', 'resources/js/export-report.js'])
+        @vite(['resources/css/finances-form.css', 'resources/js/finances-form.js', 'resources/js/export-report.js'])
         <nav x-data="{ open: false }">
             <div class="flex">
                 <x-nav-link :href="route('finances.dashboard')" :active="request()->routeIs('finances.dashboard')" class="mr-4 h2">

@@ -5,45 +5,64 @@ namespace App\Exports;
 use App\Models\Finance;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
+use Carbon\Carbon;
 
 class FinanceExport implements FromView
 {
-    protected $date;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($date)
+    public function __construct($startDate, $endDate)
     {
-        $this->date = $date;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 
     public function view(): View
     {
-        $month = date('m', strtotime($this->date));
-        $year = date('Y', strtotime($this->date));
-
-        $entries = Finance::whereYear('date_transfer', $year)
-            ->whereMonth('date_transfer', $month)
+        $entries = Finance::whereBetween('date_transfer', [$this->startDate, $this->endDate])
             ->where('transaction_type', 'Entrada')
-            ->get();
+            ->orderBy('date_transfer')
+            ->get()
+            ->groupBy(function($date) {
+                return Carbon::parse($date->date_transfer)->format('m-Y');
+            });
 
-        $withdrawals = Finance::whereYear('date_transfer', $year)
-            ->whereMonth('date_transfer', $month)
+        $withdrawals = Finance::whereBetween('date_transfer', [$this->startDate, $this->endDate])
             ->where('transaction_type', 'Saída')
-            ->get();
+            ->orderBy('date_transfer')
+            ->get()
+            ->groupBy(function($date) {
+                return Carbon::parse($date->date_transfer)->format('m-Y');
+            });
 
-        $caixa_entries = $entries->where('source', 'Caixa')->sum('value');
-        $caixa_withdrawals = $withdrawals->where('source', 'Caixa')->sum('value');
-        $banco_entries = $entries->where('source', 'Banco')->sum('value');
-        $banco_withdrawals = $withdrawals->where('source', 'Banco')->sum('value');
-        $caixa_total = $caixa_entries - $caixa_withdrawals;
-        $banco_total = $banco_entries - $banco_withdrawals;
+        $caixa_entries = $entries->map(function ($month) {
+            return $month->where('source', 'Caixa')->sum('value');
+        });
+        $caixa_withdrawals = $withdrawals->map(function ($month) {
+            return $month->where('source', 'Caixa')->sum('value');
+        });
+        $banco_entries = $entries->map(function ($month) {
+            return $month->where('source', 'Banco')->sum('value');
+        });
+        $banco_withdrawals = $withdrawals->map(function ($month) {
+            return $month->where('source', 'Banco')->sum('value');
+        });
+
+        $caixa_total = $caixa_entries->sum() - $caixa_withdrawals->sum();
+        $banco_total = $banco_entries->sum() - $banco_withdrawals->sum();
 
         return view('finances.export', [
-            'caixa_total' => $caixa_total,
-            'banco_total' => $banco_total,
             'entries' => $entries,
             'withdrawals' => $withdrawals,
-            'month' => $month,
-            'year' => $year
+            'caixa_entries' => $caixa_entries,
+            'caixa_withdrawals' => $caixa_withdrawals,
+            'banco_entries' => $banco_entries,
+            'banco_withdrawals' => $banco_withdrawals,
+            'caixa_total' => $caixa_total, // Passando caixa_total para a view
+            'banco_total' => $banco_total, // Passando banco_total para a view
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate
         ]);
     }
 }

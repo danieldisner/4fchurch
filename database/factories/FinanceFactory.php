@@ -11,22 +11,24 @@ class FinanceFactory extends Factory
 
     public function definition()
     {
-        // Obtém o primeiro e o último dia do mês atual
-        $startOfMonth = now()->startOfMonth();
-        $endOfMonth = now()->endOfMonth();
-        $transactionType = $this->faker->randomElement(['Entrada', 'Saída']);
+        $startOfYear = now()->startOfYear();
+        $endOfYear = now()->endOfYear();
 
-        if ($transactionType == 'Entrada') {
-            $title = $this->faker->randomElement(['Dízimos', 'Ofertas', 'Doações', 'Recebimentos']);
-        } else {
-            $title = $this->faker->randomElement(['Despesas de Energia', 'Despesas de Água', 'Materiais de Escritório','Reformas','Funcionários']);
-        }
+        // 70% chance of being 'Entrada', 30% chance of being 'Saída'
+        $transactionType = $this->faker->randomElement(array_merge(
+            array_fill(0, 7, 'Entrada'),
+            array_fill(0, 3, 'Saída')
+        ));
+
+        $title = $transactionType == 'Entrada'
+            ? $this->faker->randomElement(['Dízimos', 'Ofertas', 'Doações', 'Recebimentos'])
+            : $this->faker->randomElement(['Despesas de Energia', 'Despesas de Água', 'Materiais de Escritório', 'Reformas', 'Funcionários', 'Pagamentos']);
 
         return [
             'transaction_type' => $transactionType,
-            'title' =>$title,
+            'title' => $title,
             'source' => $this->faker->randomElement(['Caixa', 'Banco']),
-            'date_transfer' => $this->faker->dateTimeBetween($startOfMonth, $endOfMonth)->format('Y-m-d'),
+            'date_transfer' => $this->faker->dateTimeBetween($startOfYear, $endOfYear)->format('Y-m-d'),
             'value' => $this->faker->randomFloat(2, 100, 5000),
             'description' => $this->faker->optional()->paragraph,
             'created_at' => now(),
