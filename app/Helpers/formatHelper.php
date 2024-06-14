@@ -72,3 +72,28 @@ if(!function_exists('formatCurrencyBR')) {
         return number_format($value, 2, ',', '.');
     }
 }
+
+if (!function_exists('translateMonthBR')) {
+    function translateMonthBR($month)
+    {
+        $meses = [
+            '01' => 'Janeiro',
+            '02' => 'Fevereiro',
+            '03' => 'Março',
+            '04' => 'Abril',
+            '05' => 'Maio',
+            '06' => 'Junho',
+            '07' => 'Julho',
+            '08' => 'Agosto',
+            '09' => 'Setembro',
+            '10' => 'Outubro',
+            '11' => 'Novembro',
+            '12' => 'Dezembro',
+        ];
+
+        $year = substr($month, 0, 4);
+        $monthNumber = substr($month, 5, 2);
+
+        return $meses[$monthNumber] . ' de ' . $year;
+    }
+}

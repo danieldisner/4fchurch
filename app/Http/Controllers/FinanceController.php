@@ -93,6 +93,7 @@ class FinanceController extends Controller
 
         return response()->json(['success' => 'Registro removido com sucesso']);
     }
+
     public function report(Request $request, $view = true)
     {
         $date = $request->input('date');
@@ -104,26 +105,59 @@ class FinanceController extends Controller
             $endDate = date('Y-m-t', strtotime($date));
         }
 
-        $entries = Finance::whereBetween('date_transfer', [$startDate, $endDate])
-            ->where('transaction_type', 'Entrada')
-            ->orderBy('date_transfer') // Ordena as entradas por data
-            ->get();
+        $entries = Finance::whereBetween('date_transfer', [$startDate, $endDate])->orderBy('date_transfer')->get();
 
-        $withdrawals = Finance::whereBetween('date_transfer', [$startDate, $endDate])
-            ->where('transaction_type', 'Saída')
-            ->orderBy('date_transfer') // Ordena as saídas por data
-            ->get();
+        // Filtra entradas e saídas para o período especificado
+        $entriesForPeriod = $entries->where('transaction_type', 'Entrada');
+        $withdrawalsForPeriod = $entries->where('transaction_type', 'Saída');
 
-        $caixa_entries = $entries->where('source', 'Caixa')->sum('value');
-        $caixa_withdrawals = $withdrawals->where('source', 'Caixa')->sum('value');
-        $banco_entries = $entries->where('source', 'Banco')->sum('value');
-        $banco_withdrawals = $withdrawals->where('source', 'Banco')->sum('value');
-        $caixa_total = $caixa_entries - $caixa_withdrawals;
-        $banco_total = $banco_entries - $banco_withdrawals;
+        // Calcula totais de entradas
+        $totalEntradasCaixa = $entriesForPeriod->where('source', 'Caixa')->sum('value');
+        $totalEntradasBanco = $entriesForPeriod->where('source', 'Banco')->sum('value');
+        $totalEntradas = $totalEntradasCaixa + $totalEntradasBanco;
+
+        // Calcula totais de saídas
+        $totalSaidasCaixa = $withdrawalsForPeriod->where('source', 'Caixa')->sum('value');
+        $totalSaidasBanco = $withdrawalsForPeriod->where('source', 'Banco')->sum('value');
+        $totalSaidas = $totalSaidasCaixa + $totalSaidasBanco;
+
+        // Calcula saldo total
+        $saldoTotal = $totalEntradas - $totalSaidas;
+
+        // Agrupa entradas e saídas por mês para exibir no relatório
+        $entriesByMonth = $entriesForPeriod->groupBy(function ($entry) {
+            return Carbon::parse($entry->date_transfer)->format('Y-m');
+        });
+
+        $withdrawalsByMonth = $withdrawalsForPeriod->groupBy(function ($withdrawal) {
+            return Carbon::parse($withdrawal->date_transfer)->format('Y-m');
+        });
+
+        $monthlyReports = [];
+        foreach ($entriesByMonth as $month => $entries) {
+            $withdrawalsForMonth = $withdrawalsByMonth[$month] ?? collect();
+
+            $caixa_entries = $entries->where('source', 'Caixa')->sum('value');
+            $caixa_withdrawals = $withdrawalsForMonth->where('source', 'Caixa')->sum('value');
+            $banco_entries = $entries->where('source', 'Banco')->sum('value');
+            $banco_withdrawals = $withdrawalsForMonth->where('source', 'Banco')->sum('value');
+            $caixa_total = $caixa_entries - $caixa_withdrawals;
+            $banco_total = $banco_entries - $banco_withdrawals;
+
+            $monthlyReports[] = [
+                'month' => $month,
+                'caixa_total' => $caixa_total,
+                'banco_total' => $banco_total,
+                'entries' => $entries,
+                'withdrawals' => $withdrawalsForMonth,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+            ];
+        }
 
         $logoPath = $view ? asset('storage\company\default.png') : public_path('storage\company\default.png');
 
-        return view('finances.report', compact('caixa_total', 'banco_total', 'entries', 'withdrawals','startDate', 'endDate',  'logoPath'));
+        return view('finances.report', compact('monthlyReports', 'logoPath', 'startDate', 'endDate', 'totalEntradasCaixa', 'totalEntradasBanco', 'totalEntradas', 'totalSaidasCaixa', 'totalSaidasBanco', 'totalSaidas', 'saldoTotal'));
     }
 
     public function exportPdf(Request $request)
