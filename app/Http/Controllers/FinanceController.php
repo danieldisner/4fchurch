@@ -83,7 +83,7 @@ class FinanceController extends Controller
             'value',
             'description',
         ]));
-        return response()->json(['success' => 'Transaction updated successfully']);
+        return response()->json(['success' => 'Finanças atualizadas com sucesso']);
     }
 
     public function destroy($id)
@@ -107,24 +107,19 @@ class FinanceController extends Controller
 
         $entries = Finance::whereBetween('date_transfer', [$startDate, $endDate])->orderBy('date_transfer')->get();
 
-        // Filtra entradas e saídas para o período especificado
         $entriesForPeriod = $entries->where('transaction_type', 'Entrada');
         $withdrawalsForPeriod = $entries->where('transaction_type', 'Saída');
 
-        // Calcula totais de entradas
         $totalEntradasCaixa = $entriesForPeriod->where('source', 'Caixa')->sum('value');
         $totalEntradasBanco = $entriesForPeriod->where('source', 'Banco')->sum('value');
         $totalEntradas = $totalEntradasCaixa + $totalEntradasBanco;
 
-        // Calcula totais de saídas
         $totalSaidasCaixa = $withdrawalsForPeriod->where('source', 'Caixa')->sum('value');
         $totalSaidasBanco = $withdrawalsForPeriod->where('source', 'Banco')->sum('value');
         $totalSaidas = $totalSaidasCaixa + $totalSaidasBanco;
 
-        // Calcula saldo total
         $saldoTotal = $totalEntradas - $totalSaidas;
 
-        // Agrupa entradas e saídas por mês para exibir no relatório
         $entriesByMonth = $entriesForPeriod->groupBy(function ($entry) {
             return Carbon::parse($entry->date_transfer)->format('Y-m');
         });
@@ -335,5 +330,4 @@ class FinanceController extends Controller
         }
         return $topFour;
     }
-
 }

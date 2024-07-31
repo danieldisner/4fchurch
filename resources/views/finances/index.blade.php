@@ -86,7 +86,7 @@
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-2 text-gray-900 bg-white">
                         <div class="flex justify-between">
-                            <fieldset class="w-1/2 mb-4 mr-2 border border-gray-200">
+                            <fieldset class="container w-1/2 mb-4 mr-2 border border-gray-200">
                                 <legend class="text-lg font-medium leading-6 text-center text-gray-500">
                                     Entradas
                                 </legend>

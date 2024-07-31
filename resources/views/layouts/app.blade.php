@@ -80,37 +80,28 @@
 </html>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Seleciona as mensagens de sucesso e de erro
         var successMessage = document.querySelector('.success-message');
         var errorMessage = document.querySelector('.error-message');
 
-        // Função para ocultar as mensagens após 5 segundos
         function hideMessages() {
             setTimeout(function() {
                 if (successMessage)
                     successMessage.style.display = 'none';
             }, 5000);
         }
-
-        // Chama a função para ocultar as mensagens
         hideMessages();
     });
 
     const showMessage = (message, type = 'success') => {
-        // Seleciona o contêiner onde as mensagens serão exibidas
         const container = document.querySelector('.min-h-screen');
-
-        // Cria o elemento de mensagem
         const messageElement = document.createElement('div');
         messageElement.className = type === 'success' ? 'success-message' : 'error-message';
         messageElement.textContent = message;
 
-        // Insere a mensagem após o bloco de mensagens de sessão
         const referenceNode = document.querySelector('.success-message, .error-message') || document.querySelector(
             'header.bg-white') || container.firstChild;
         referenceNode.insertAdjacentElement('afterend', messageElement);
 
-        // Função para ocultar a mensagem após 5 segundos
         setTimeout(() => {
             messageElement.style.display = 'none';
         }, 5000);

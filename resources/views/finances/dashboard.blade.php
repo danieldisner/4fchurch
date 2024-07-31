@@ -115,7 +115,7 @@
         });
 
         var options = {
-            title: 'Saídas',
+            title: 'Entradas',
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('entryChart'));
@@ -133,7 +133,7 @@
         });
 
         var options = {
-            title: 'Entradas',
+            title: 'Saídas',
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('exitChart'));

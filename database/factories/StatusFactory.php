@@ -13,6 +13,7 @@ class StatusFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->word,
+            'tailwind_classes' => $this->faker->tailwindColor(),
         ];
     }
 }

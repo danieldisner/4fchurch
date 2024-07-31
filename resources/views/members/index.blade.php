@@ -6,35 +6,35 @@
     </x-slot>
     <div class="py-12 pt-1">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between my-4">
-                <div class="flex items-center space-x-4">
+            <div class="flex flex-col my-4 sm:flex-row sm:items-center sm:justify-between">
+                <input type="text" id="search" class="px-4 py-2 mb-2 rounded-full sm:mt-0"
+                    placeholder="Buscar membros...">
+                <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
                     @if (auth()->user()->hasAnyPermission(['create']))
-                        <button
-                            class="flex items-center px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
+                        <a href="{{ route('members.create') }}"
+                            class="flex items-center px-4 py-2 font-bold text-center text-white bg-blue-500 rounded-full hover:bg-blue-700">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-person-plus-fill" viewBox="0 0 16 16">
                                 <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
                                 <path fill-rule="evenodd"
                                     d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5" />
                             </svg>
-                            <a href="{{ route('members.create') }}" class="ml-2">Cadastrar</a>
-                        </button>
+                            <span class="ml-2">Cadastrar</span>
+                        </a>
                     @endcan
-                    <button
-                        class="flex items-center px-4 py-2 mt-4 font-bold text-white bg-red-500 rounded-full hover:bg-red-700">
+                    <a href="{{ route('members.trash') }}"
+                        class="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full mt- hover:bg-red-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        <a href="{{ route('members.trash') }}" class="ml-2 text-white">Lixeira</a>
-                    </button>
+                        <span class="ml-2">Lixeira</span>
+                    </a>
             </div>
-            <input type="text" id="search" class="px-4 py-2 border rounded-full"
-                placeholder="Buscar membros...">
         </div>
-        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-            <div class="p-4 text-gray-900 bg-white">
+        <div class="w-full overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="w-full p-4 text-gray-900 bg-white">
                 <table class="min-w-full p-4 overflow-x-auto divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -59,7 +59,7 @@
                     <tbody id="members-list" class="bg-white divide-y divide-gray-200">
                         @foreach ($members as $member)
                             <tr class="hover:bg-gray-100">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap no-hide">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 w-10 h-10">
                                             <a href="{{ route('members.show', $member) }}">
@@ -104,43 +104,10 @@
                                         {{ $member->uf }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @switch($member->status->id)
-                                        @case(1)
-                                            <span
-                                                class="inline-flex px-2 text-xs font-semibold leading-5 bg-gray-100 rounded-full text-black-800">
-                                                {{ $member->status->name }}
-                                            </span>
-                                        @break
-
-                                        @case(2)
-                                            <span
-                                                class="inline-flex px-2 text-xs font-semibold leading-5 text-blue-800 bg-blue-100 rounded-full">
-                                                {{ $member->status->name }}
-                                            </span>
-                                        @break
-
-                                        @case(3)
-                                            <span
-                                                class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
-                                                {{ $member->status->name }}
-                                            </span>
-                                        @break
-
-                                        @case(4)
-                                            <span
-                                                class="inline-flex px-2 text-xs font-semibold leading-5 text-red-800 bg-red-100 rounded-full">
-                                                {{ $member->status->name }}
-                                            </span>
-                                        @break
-
-                                        @default
-                                            <span
-                                                class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full text-black-800 bg-black-100">
-                                                {{ $member->status->name }}
-                                            </span>
-                                        @break
-                                    @endswitch
-
+                                    <span
+                                        class="inline-flex px-2 text-xs font-semibold leading-5 {{ $member->status->tailwind_classes }} rounded-full">
+                                        {{ $member->status->name }}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-bold">
                                     @php
@@ -257,7 +224,7 @@
                             <div class="text-sm text-gray-500"> ${member.address_neighborhood}  - ${member.city}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            ${member.status ? `<span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${getStatusClass(member.status)}">${member.status.name}</span>` : ''}
+                            ${member.status ? `<span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${member.status.tailwind_classes}">${member.status.name}</span>` : ''}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                             <a href="${whatsappLink}" target="_blank" class="inline-flex text-blue-500 hover:underline">
@@ -311,22 +278,6 @@
             return value
                 .replace(/\D/g, '')
                 .replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-        }
-
-        function getStatusClass(status) {
-            if (!status) return '';
-            switch (status.id) {
-                case 1:
-                    return 'bg-gray-100 text-black-800';
-                case 2:
-                    return 'text-blue-800 bg-blue-100';
-                case 3:
-                    return 'text-green-800 bg-green-100';
-                case 4:
-                    return 'text-red-800 bg-red-100';
-                default:
-                    return 'text-black-800 bg-black-100';
-            }
         }
     });
 </script>

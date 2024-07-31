@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Create New Member') }}
+            {{ __('Cadastrar Membro') }}
         </h2>
     </x-slot>
 
@@ -162,7 +162,7 @@
                         <div class="flex justify-center mt-6">
                             <button type="submit"
                                 class="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700">
-                                Create Member
+                                Cadastrar Membro
                             </button>
                         </div>
                     </form>
