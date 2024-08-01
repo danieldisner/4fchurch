@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
+    server: {
+        cors: true, // Adiciona suporte a CORS
+    },
     plugins: [
         laravel({
             input: [
