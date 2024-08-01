@@ -10,8 +10,23 @@ export default defineConfig({
                 'resources/js/member-form.js',
                 'resources/js/finances-form.js',
                 'resources/js/export-report.js',
+                'resources/css/finances-form.css'
             ],
             refresh: true,
         }),
     ],
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        rollupOptions: {
+            input: {
+                app: 'resources/js/app.js',
+                'member-form': 'resources/js/member-form.js',
+                'finances-form': 'resources/js/finances-form.js',
+                'export-report': 'resources/js/export-report.js',
+                'app-css': 'resources/css/app.css',
+                'finances-form-css': 'resources/css/finances-form.css'
+            }
+        }
+    },
 });
