@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
     plugins: [
         laravel({
             input: [
@@ -15,11 +15,8 @@ export default defineConfig(({ command }) => ({
             refresh: true,
         }),
     ],
-    // Configuração adicional para o caminho do manifest
     build: {
-        manifest: {
-            publicPath: '/build/',
-        },
+        manifest: true,
         outDir: 'public/build',
         rollupOptions: {
             input: {
@@ -29,18 +26,15 @@ export default defineConfig(({ command }) => ({
                 'export-report': 'resources/js/export-report.js',
                 'app-css': 'resources/css/app.css',
                 'finances-form-css': 'resources/css/finances-form.css',
-            }
+            },
+            output: {
+                manualChunks: undefined,
+                entryFileNames: '[name]-[hash].js',
+                chunkFileNames: '[name]-[hash].js',
+                assetFileNames: '[name]-[hash][extname]',
+                dir: 'public/build',
+                assetDir: 'public/build/assets',
+            },
         },
-
     },
-    server: command === 'serve' ? {
-        cors: {
-            origin: '*',
-        },
-        host: '0.0.0.0',
-        hmr: {
-            host: 'localhost',
-        }
-    } : {},
-
-}));
+});
