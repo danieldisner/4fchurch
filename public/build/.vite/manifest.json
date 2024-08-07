@@ -1,0 +1,46 @@
+{
+  "_formatting-Djhzecxh.js": {
+    "file": "assets/formatting-Djhzecxh.js",
+    "name": "formatting"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-css-C0YGkPc1.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/finances-form.css": {
+    "file": "assets/finances-form-css-DfU7uhyT.css",
+    "src": "resources/css/finances-form.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CH09qwMe.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/export-report.js": {
+    "file": "assets/export-report-CH4QbM99.js",
+    "name": "export-report",
+    "src": "resources/js/export-report.js",
+    "isEntry": true
+  },
+  "resources/js/finances-form.js": {
+    "file": "assets/finances-form-BxRrr5Jf.js",
+    "name": "finances-form",
+    "src": "resources/js/finances-form.js",
+    "isEntry": true,
+    "imports": [
+      "_formatting-Djhzecxh.js"
+    ]
+  },
+  "resources/js/member-form.js": {
+    "file": "assets/member-form-D-vf_RwV.js",
+    "name": "member-form",
+    "src": "resources/js/member-form.js",
+    "isEntry": true,
+    "imports": [
+      "_formatting-Djhzecxh.js"
+    ]
+  }
+}
