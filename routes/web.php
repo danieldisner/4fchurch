@@ -14,6 +14,16 @@ Route::get('/', function () {
     return view('welcome');
 })->withoutMiddleware(CheckPermission::class);
 
+Route::get('/build/{file}', function ($file) {
+    $path = public_path('build/' . $file);
+
+    if (file_exists($path)) {
+        return response()->file($path);
+    }
+
+    abort(404);
+});
+
 Route::get('/dashboard', function () {
     $totalMembers = Member::count();
     $membersByStatus = Member::select('status_id')
