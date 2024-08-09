@@ -33,7 +33,6 @@ export default defineConfig({
                 chunkFileNames: '[name]-[hash].js',
                 assetFileNames: '[name]-[hash][extname]',
                 dir: 'public/build',
-                assetDir: 'public/build/assets',
             },
         },
     },
