@@ -15,7 +15,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    base: "https://srv555276.hstgr.cloud/",
+    base: "./",
     build: {
         manifest: true,
         outDir: 'public/build',
