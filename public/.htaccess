@@ -15,11 +15,12 @@
     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
-# Ensure proper MIME types are set
-AddType application/javascript .js
-AddType text/css .css
-AddType font/woff .woff
-AddType font/woff2 .woff2
-AddType image/svg+xml .svg
-AddType application/x-font-ttf .ttf
-AddType font/otf .otf
+<FilesMatch "\.(ttf|otf|eot|woff|woff2|js|css)$">
+    <IfModule mod_headers.c>
+        SetEnvIf Origin "http(s)?://(.*)?(site\.baa|site\.dee|site\.com)$" AccessControlAllowOrigin=LARACASTS_SNIPPET_PLACEHOLDER
+        Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+        Header merge Vary Origin
+		Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+    </IfModule>
+</FilesMatch>
