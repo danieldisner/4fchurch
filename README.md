@@ -55,10 +55,10 @@ Este é um sistema de **gestão de finanças e membros para igrejas**, desenvolv
    npm install
    npm run build
 
-4. Configure o arquivo .env:
-
 5. Execute as migrações:
-php artisan migrate --seed
+   ```bash
+   php artisan migrate --seed
 
 6. Inicie o servidor local.
-php artisan serve
+   ```bash
+   php artisan serve
