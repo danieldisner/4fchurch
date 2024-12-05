@@ -59,8 +59,8 @@ class FinanceExport implements FromView
             'caixa_withdrawals' => $caixa_withdrawals,
             'banco_entries' => $banco_entries,
             'banco_withdrawals' => $banco_withdrawals,
-            'caixa_total' => $caixa_total, // Passando caixa_total para a view
-            'banco_total' => $banco_total, // Passando banco_total para a view
+            'caixa_total' => $caixa_total,
+            'banco_total' => $banco_total,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate
         ]);
